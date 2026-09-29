@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BabyMonkey local maintenance CLI configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "accountId",
+    "databaseId",
+    "origin"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "accountId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "databaseId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "origin": {
+      "type": "string",
+      "pattern": "^https://(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+      "description": "Canonical HTTPS DNS origin; runtime validation also rejects IP, local and reserved hostnames, ports, paths and placeholders."
+    }
+  }
+}

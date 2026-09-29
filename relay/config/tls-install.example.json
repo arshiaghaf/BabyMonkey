@@ -1,0 +1,4 @@
+{
+  "hostname": "relay.example.test",
+  "lineage": "/etc/letsencrypt/live/relay.example.test"
+}

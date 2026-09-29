@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "REPLACE_WORKER_NAME",
+  "main": "REPLACE_SITE_DIRECTORY/worker.ts",
+  "alias": {
+    "server-only": "REPLACE_SITE_DIRECTORY/node_modules/server-only/empty.js"
+  },
+  "compatibility_date": "2026-08-23",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": false,
+  "preview_urls": false,
+  "upload_source_maps": false,
+  "assets": {
+    "directory": "REPLACE_SITE_DIRECTORY/.open-next/assets",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "routes": [
+    {
+      "pattern": "REPLACE_APP_HOSTNAME",
+      "custom_domain": true
+    }
+  ],
+  "vars": {
+    "BABYMONKEY_RP_ID": "REPLACE_APP_HOSTNAME",
+    "BABYMONKEY_ORIGIN": "https://REPLACE_APP_HOSTNAME",
+    "BABYMONKEY_RELAY_ORIGIN": "https://REPLACE_RELAY_HOSTNAME"
+  },
+  "mtls_certificates": [
+    {
+      "binding": "BABYMONKEY_RELAY_MTLS",
+      "certificate_id": "REPLACE_CERTIFICATE_ID"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "REPLACE_DATABASE_NAME",
+      "database_id": "REPLACE_DATABASE_ID",
+      "remote": false,
+      "migrations_dir": "REPLACE_SITE_DIRECTORY/migrations"
+    }
+  ]
+}

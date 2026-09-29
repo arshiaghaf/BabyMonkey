@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "exactOptionalPropertyTypes": true,
+    "lib": ["ES2023", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "strict": true,
+    "target": "ES2023",
+    "types": ["node", "vitest/globals"]
+  },
+  "include": [
+    "eslint.config.mjs",
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "vitest.config.ts",
+    "../../../site/server/d1/types.ts",
+    "../../../site/server/d1/repository.ts"
+  ]
+}

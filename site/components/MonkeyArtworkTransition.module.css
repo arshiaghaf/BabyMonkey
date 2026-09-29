@@ -1,0 +1,37 @@
+.stack {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.current {
+  z-index: 2;
+}
+
+.departing {
+  z-index: 1;
+}
+
+.transitioning .current {
+  animation: artwork-fade-in 200ms ease-in-out both;
+}
+
+.transitioning .departing {
+  animation: artwork-fade-out 200ms ease-in-out both;
+}
+
+@keyframes artwork-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes artwork-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

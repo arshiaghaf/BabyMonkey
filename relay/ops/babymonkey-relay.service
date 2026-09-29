@@ -1,0 +1,69 @@
+[Unit]
+Description=BabyMonkey fixed-notification relay
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=babymonkey-relay
+Group=babymonkey-relay
+UMask=0077
+StateDirectory=babymonkey-relay
+StateDirectoryMode=0700
+ExecStartPre=/opt/babymonkey-relay/current/babymonkey-relay -config /etc/babymonkey-relay/relay.json -check
+ExecStart=/opt/babymonkey-relay/current/babymonkey-relay -config /etc/babymonkey-relay/relay.json
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=15s
+TimeoutStopSec=8s
+KillMode=mixed
+
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectSystem=strict
+ProcSubset=pid
+RemoveIPC=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+ReadOnlyPaths=/etc/babymonkey-relay /opt/babymonkey-relay
+ReadWritePaths=/var/lib/babymonkey-relay
+
+MemoryMax=64M
+MemorySwapMax=0
+CPUQuota=10%
+CPUWeight=10
+IOWeight=10
+Nice=10
+IOSchedulingClass=idle
+TasksMax=24
+LimitNOFILE=128
+LimitCORE=0
+LimitNPROC=24
+
+StandardOutput=journal
+StandardError=journal
+LogRateLimitIntervalSec=30s
+LogRateLimitBurst=20
+
+[Install]
+WantedBy=multi-user.target

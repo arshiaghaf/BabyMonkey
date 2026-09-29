@@ -1,0 +1,94 @@
+.controls {
+  --babymonkey-local-preview-style: 1;
+  position: fixed;
+  z-index: 30;
+  right: 12px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 12px;
+  width: min(560px, calc(100% - 24px));
+  margin-inline: auto;
+  padding: 12px;
+  border: 1px solid rgb(74 31 53 / 18%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 96%);
+  box-shadow: 0 10px 36px rgb(74 31 53 / 16%);
+  color: var(--color-berry);
+  font-size: 13px;
+  line-height: 1.35;
+  transition: opacity 900ms ease-in-out;
+}
+
+.controls p {
+  margin: 0;
+}
+
+.stateButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.controls button {
+  min-height: 44px;
+  padding: 7px 10px;
+  border: 1px solid var(--color-petal-pink);
+  border-radius: 9px;
+  background: var(--color-rosewater);
+  color: var(--color-berry);
+  cursor: pointer;
+}
+
+.controls button[aria-pressed="true"] {
+  border-color: var(--color-primary-rose);
+  background: var(--color-recovery-blush);
+  font-weight: 700;
+}
+
+.controls .hideControls {
+  min-height: 44px;
+  margin-top: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--color-muted-berry);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.showControls {
+  position: fixed;
+  z-index: 30;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-petal-pink);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 6px 20px rgb(74 31 53 / 12%);
+  color: var(--color-muted-berry);
+  font-family: var(--font-app);
+  font-size: 13px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: opacity 900ms ease-in-out;
+}
+
+.controls button:focus-visible,
+.showControls:focus-visible {
+  outline: 3px solid var(--color-focus-berry);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--color-rosewater);
+}
+
+@media (max-height: 690px) {
+  .showControls {
+    top: max(12px, env(safe-area-inset-top));
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    width: 124px;
+    padding: 5px 8px;
+    transform: translateX(-50%);
+  }
+}

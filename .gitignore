@@ -1,0 +1,14 @@
+PRIVATE_OSS_PLANNING_NOTES.md
+**/node_modules/
+**/.next/
+**/.open-next/
+**/.wrangler/
+**/dist/
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/.npm-cache/
+*.local.json
+
+**/*.tsbuildinfo
+**/.cache/

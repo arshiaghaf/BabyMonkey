@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  --color-rosewater: #fff7fa;
+  --color-primary-rose: #e97aae;
+  --color-petal-pink: #f6cadb;
+  --color-berry: #4a1f35;
+  --color-muted-berry: #765468;
+  --color-focus-berry: #7b294f;
+  --color-recovery-blush: #fde8ef;
+  --color-rosewater-field: #f8dce9;
+  --color-petal-wash: rgb(240 193 221 / 88%);
+  --color-rose-wash: rgb(233 122 174 / 40%);
+  --color-center-wash: rgb(255 244 248 / 72%);
+  --color-rosewater-translucent: rgb(255 247 250 / 74%);
+  --font-app:
+    ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont,
+    "SF Pro Text", "Segoe UI", sans-serif;
+}
+
+:root {
+  color-scheme: light;
+  background: var(--color-rosewater-field);
+  color: var(--color-berry);
+  font-family: var(--font-app);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--color-rosewater-field);
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+}
+
+.rosewater-surface {
+  min-height: 100svh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(
+      ellipse 64% 46% at 50% 46%,
+      var(--color-center-wash) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 72% 42% at 4% 12%,
+      var(--color-petal-wash) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 68% 38% at 96% 88%,
+      var(--color-rose-wash) 0%,
+      transparent 72%
+    ),
+    var(--color-rosewater-field);
+  color: var(--color-berry);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "@babymonkey/maintenance-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "files": [
+    "dist/maintenance-cli.mjs",
+    "config.example.json",
+    "config.schema.json"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "lint": "eslint src test scripts vitest.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run test:unit && npm run test:integration && npm run test:pty",
+    "test:unit": "vitest run test/terminal.test.ts test/storage.test.ts test/status.test.ts test/transport.test.ts test/clipboard.test.ts test/package-boundary.test.ts test/session.test.ts",
+    "test:integration": "vitest run test/operations.test.ts test/integration-stack.test.ts",
+    "test:pty": "vitest run test/tty-lifecycle.test.ts",
+    "leakage:check": "node scripts/check-leakage.mjs",
+    "package:check": "npm run build && npm pack --dry-run --json --cache .npm-cache",
+    "check": "npm run lint && npm run typecheck && npm test && npm run leakage:check && npm run package:check",
+    "start": "npm run build && node dist/maintenance-cli.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.4",
+    "@types/node": "22.19.19",
+    "esbuild": "0.28.1",
+    "eslint": "9.39.4",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.48.0",
+    "vitest": "4.1.11"
+  }
+}

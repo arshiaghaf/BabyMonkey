@@ -1,0 +1,60 @@
+{
+  "name": "babymonkey-ui-preview",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "start": "NEXT_TELEMETRY_DISABLED=1 next start --hostname 127.0.0.1",
+    "build:cloudflare": "NEXT_TELEMETRY_DISABLED=1 CLOUDFLARE_CF_FETCH_ENABLED=false WRANGLER_SEND_METRICS=false WRANGLER_SEND_ERROR_REPORTS=false opennextjs-cloudflare build && node scripts/stage-protected-assets.mjs",
+    "lint": "eslint . --ignore-pattern .next --ignore-pattern .open-next --ignore-pattern coverage",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:d1": "vitest run --config vitest.d1.config.ts",
+    "test:relay:local": "vitest run --config vitest.relay.config.ts",
+    "test:browser": "npm run test:browser:development",
+    "test:browser:development": "playwright test --config playwright.config.ts",
+    "test:watch": "vitest",
+    "check": "npm run lint && npm run typecheck && npm run test && npm run test:d1 && npm run test:relay:local && npm run test:setup",
+    "demo": "BABYMONKEY_LOCAL_DEMO=1 BABYMONKEY_FAKE_DELIVERY=confirmed NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
+    "setup:check": "node scripts/setup-check.mjs",
+    "test:browser:demo": "node scripts/run-demo-browser-tests.mjs",
+    "demo:failure": "BABYMONKEY_LOCAL_DEMO=1 BABYMONKEY_FAKE_DELIVERY=definitive-failure NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
+    "demo:ambiguous": "BABYMONKEY_LOCAL_DEMO=1 BABYMONKEY_FAKE_DELIVERY=ambiguous NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
+    "artifact:check": "node scripts/check-artifact.mjs",
+    "test:setup": "node --test --test-concurrency=1 scripts/setup-check.test.mjs scripts/demo-safety.test.mjs scripts/runner-lifecycle.test.mjs scripts/browser-output.test.mjs",
+    "test:browser:production": "node scripts/run-cloudflare-browser-tests.mjs"
+  },
+  "dependencies": {
+    "@opennextjs/cloudflare": "1.20.2",
+    "@simplewebauthn/browser": "13.3.0",
+    "@simplewebauthn/server": "13.3.2",
+    "next": "16.3.2",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.0.0",
+    "@cloudflare/workers-types": "^5.20260823.1",
+    "@playwright/test": "1.62.1",
+    "@tailwindcss/postcss": "4.2.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.6",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.3.2",
+    "jsdom": "30.0.1",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11",
+    "wrangler": "4.125.0"
+  }
+}

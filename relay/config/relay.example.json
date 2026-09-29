@@ -1,0 +1,9 @@
+{
+  "https_listen": ":443",
+  "server_certificate_file": "/etc/babymonkey-relay/tls/server-certificate.pem",
+  "server_private_key_file": "/etc/babymonkey-relay/tls/server-private-key.pem",
+  "client_ca_file": "/etc/babymonkey-relay/client-ca.pem",
+  "allowlist_file": "/etc/babymonkey-relay/allowlist.json",
+  "credentials_file": "/etc/babymonkey-relay/credentials.json",
+  "replay_state_file": "/var/lib/babymonkey-relay/replay.json"
+}
