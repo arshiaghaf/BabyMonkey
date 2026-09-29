@@ -1,32 +1,74 @@
-# BabyMonkey
+<p align="center">
+  <img src="site/protected-assets/monkey/ready-monkey.png" width="240" alt="A smiling baby monkey sitting inside a pink storybook badge">
+</p>
 
-BabyMonkey is a small pink app for **exactly two equal users**. Each receives a private, single-use invitation, registers one passkey, and can deliberately tap one monkey to send the same fixed notification. There is no account administrator in the app; the deployment owner maintains it from a separate local terminal.
+# Baby Monkey
 
-I originally built BabyMonkey for someone I care about, to make reaching out a little easier when words felt difficult. One small gesture lets someone know you’d welcome their company.
+A little pink way to ask someone to reach out. **Exactly two equal users, one monkey button, and one fixed Telegram signal sent only after a deliberate tap.**
 
-**Start here:** [Set up BabyMonkey](docs/SETUP.md). First try the local demo, which needs no Cloudflare, VPS, or Telegram account and sends nothing. The later hosted steps require your own permanent domain, Cloudflare account, isolated Linux VPS, and separate Telegram bot. This is a hands-on setup; the local demo is not proof that your hosted installation works.
+## Start with your agent
 
-Want an assistant to guide you? Give it [the agent setup prompt](AGENT_SETUP_PROMPT.md), then work through the same guide together. Enter secrets only into the private terminal or provider UI named in the guide, never into agent chat.
+Paste this into a coding agent that can browse the web and work in a terminal. **You don't need to clone the repository first.**
 
 ```text
-two browsers → Cloudflare Worker + D1 → client-certificate-authenticated Go relay on your VPS → Telegram
+Help me set up Baby Monkey from https://github.com/arshiaghaf/BabyMonkey.
+Read the full copyable setup prompt at
+https://github.com/arshiaghaf/BabyMonkey/blob/main/AGENT_SETUP_PROMPT.md
+and follow it using the actual repository instructions and docs/SETUP.md.
+Start by finding a suitable checkout or cloning safely, then run and verify
+the provider-free local demo and its cleanup. Guide me through hosted setup
+in reviewed stages. Keep secrets out of chat and ask before any external
+stage I have not already authorized.
 ```
 
-The Worker never receives the Telegram bot token or destination. The relay owns the fixed message and those credentials. A confirmed result means Telegram accepted the request; it does not prove a person saw it. See [validation](VALIDATION.md) for what this skeleton has actually exercised. Hosted provisioning, real-device enrollment, and live delivery still need owner-controlled verification.
+Your agent can inspect prerequisites, prepare private configuration, run local checks, and guide the Cloudflare, VPS, and Telegram steps. You'll still choose your accounts and hostnames, enter credentials privately, approve external actions, share invitations privately, and complete the passkey prompts. This is a guided setup, with checkpoints along the way.
 
-## Local start
+[Copy the full agent prompt](AGENT_SETUP_PROMPT.md) · [Follow the manual setup guide](docs/SETUP.md) · [Read the validation record](VALIDATION.md)
 
-Use Node.js 22.13+ (the declared minimum; validation used Node 26.10.0 on macOS). From `site/`:
+## How Baby Monkey works
+
+I originally built Baby Monkey for someone I care about, to make reaching out a little easier when words felt difficult. One small gesture lets someone know you’d welcome their company.
+
+Each person receives a private, single-use invitation and registers one passkey. Both get the same access and the same monkey button. The deployment owner handles maintenance from a separate local terminal; neither account has administrator powers in the app.
+
+There are no message choices, freeform text, reminders, analytics, or signal history. A confirmed result means Telegram accepted the request; it does not mean someone saw it. An uncertain result is shown honestly, and revealing an existing outcome never sends again.
+
+<p align="center">
+  <img src="site/protected-assets/monkey/pending-monkey.png" width="120" alt="A baby monkey with open arms, used for a pending request">
+  <img src="site/protected-assets/monkey/confirmed-monkey.png" width="120" alt="A baby monkey hugging a pink heart, used for a confirmed request">
+</p>
+
+## Try it locally yourself
+
+The demo needs no Cloudflare, VPS, or Telegram account and sends nothing. With Git, npm, and Node.js installed, run these commands from a directory where a new `BabyMonkey` folder is safe to create:
 
 ```sh
+git clone https://github.com/arshiaghaf/BabyMonkey.git
+cd BabyMonkey/site
 npm ci
 npm run demo
 ```
 
-The demo creates two one-hour synthetic invitations in a disposable local D1 and uses fake delivery only. Open the URLs shown in the terminal in separate browser profiles, then stop with Ctrl-C. For automated two-user checks, install Playwright Chromium if needed and run `npm run test:browser:demo`. `npm run dev` is an inert visual preview. See [the setup guide](docs/SETUP.md) for exact checks, cleanup limits, and the separate hosted sequence.
+Open the two synthetic invitation URLs printed in the terminal in separate browser profiles. Stop with Ctrl-C and verify that the demo process and its disposable state are cleaned up. If startup or cleanup fails, use the [demo instructions](docs/SETUP.md#2-try-it-locally-first) before retrying.
 
-## License and release files
+Node.js 22.13+ is the declared minimum; recorded validation used Node 26.10.0 on macOS. The minimum and Linux owner tooling remain unverified; the local demo and maintenance CLI do not support native Windows. `npm run dev` is an inert visual preview. Optional automated demo checks and their limits are in the setup guide.
 
-Project source and the original monkey artwork are released under the [MIT license](LICENSE), with `2026 arshiaghaf` attribution. See the [artwork provenance and inventory](docs/ARTWORK.md) for the included assets. Third-party dependencies retain their own licenses.
+## Give it a home
 
-Publicly committed text is public even when the running app serves it only after authentication. Private planning material has been relocated outside this checkout. Keep generated bundles, local D1 state, credentials, invitations, and test output outside release artifacts. This local candidate has not initialized Git or been published; hosted setup and verification remain separate owner-controlled steps.
+Hosted setup uses your own permanent app domain, Cloudflare account, isolated Ubuntu VPS, and separate Telegram bot with one private destination.
+
+| Piece | Its job |
+| --- | --- |
+| Cloudflare Worker + OpenNext + D1 | Serve the app, verify passkeys and opaque sessions, coordinate bounded signal state |
+| Isolated Go relay on your VPS | Authorize the Worker's exact mTLS client certificate and send the fixed Telegram message |
+| Local owner CLI | Manage invitations, recovery, sessions, and the notification switch outside the app |
+
+The Worker never receives the Telegram bot token, destination, or message configuration. Those stay in the relay's private configuration. Public responses remain neutral; protected artwork and actions require server authorization.
+
+Follow [the hosted setup sequence](docs/SETUP.md#3-prepare-private-owner-files-and-the-cloudflare-database) after the demo. Provisioning, migrations, DNS, deployment, notification enablement, and a live send are separate owner-approved stages. The [validation record](VALIDATION.md) documents local synthetic checks; hosted delivery, renewal, and real-device behavior require verification on your installation.
+
+## License and artwork
+
+Source and the original monkey artwork are released under [MIT](LICENSE), with `2026 arshiaghaf` attribution. The [artwork record](docs/ARTWORK.md) lists provenance and included assets. Third-party dependencies retain their own licenses.
+
+Public commits are public even when the running app serves content only after authentication. Keep private deployment wording, credentials, invitations, configuration, generated bundles, and local state outside public release artifacts.
