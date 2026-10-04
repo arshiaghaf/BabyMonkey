@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderToString } from 'react-dom/server';
 
 import {
   AuthorizedIdentityPresentation,
@@ -36,6 +37,34 @@ describe('authorized interaction host', () => {
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     })));
+  });
+
+  it.each(['ready', 'confirmed', 'definitive-failure', 'ambiguous'] as const)(
+    'keeps server-rendered %s controls unavailable before hydration', (state) => {
+      const initialInteraction: AuthorizedIdentityPresentationProps['initialInteraction'] = state === 'ready'
+        ? { available: true, state, version: null }
+        : { available: true, state, retryAfterMs: 0, version: 'd'.repeat(64) };
+      const html = renderToString(
+        <AuthorizedIdentityPresentation {...baseProps} initialInteraction={initialInteraction} />,
+      );
+      const document = new DOMParser().parseFromString(html, 'text/html');
+      const controls = Array.from(document.querySelectorAll('button'));
+      expect(controls).toHaveLength(2);
+      expect(controls.every((control) => control.disabled)).toBe(true);
+    },
+  );
+
+  it('keeps sending unavailable after hydration when the server disallows interaction', async () => {
+    const user = userEvent.setup();
+    const request = vi.spyOn(globalThis, 'fetch');
+    render(
+      <AuthorizedIdentityPresentation {...baseProps} initialInteraction={{ available: false }} />,
+    );
+    expect(screen.getByRole('button', { name: 'Sign out' })).toBeEnabled();
+    const action = screen.getByRole('button', { name: 'Ask the recipient to reach out gently' });
+    expect(action).toBeDisabled();
+    await user.click(action);
+    expect(request).not.toHaveBeenCalled();
   });
 
   it.each([
