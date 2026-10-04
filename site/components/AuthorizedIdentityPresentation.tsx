@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { BabyMonkeyExperience } from '@/components/BabyMonkeyExperience';
 import { MonkeyAssetWarmup } from '@/components/MonkeyAssetWarmup';
 import { PublicAuthShell } from '@/components/PublicAuthShell';
@@ -34,6 +34,9 @@ export interface AuthorizedIdentityPresentationProps {
 
 const csrfCookieName = '__Host-bm-csrf';
 const signalVersionHeaderName = 'x-bm-signal-version';
+const subscribeToHydration = () => () => {};
+const clientHydrated = () => true;
+const serverHydrated = () => false;
 function readCsrfCookie(): string | null {
   const matches = document.cookie
     .split(';')
@@ -87,6 +90,8 @@ export function AuthorizedIdentityPresentation({
   presentations,
 }: AuthorizedIdentityPresentationProps) {
   const [leaving, setLeaving] = useState(false);
+  // Server-rendered controls must wait until React attaches their handlers.
+  const hydrated = useSyncExternalStore(subscribeToHydration, clientHydrated, serverHydrated);
   const initialTerminal = initialInteraction.available
     && (initialInteraction.state === 'confirmed'
       || initialInteraction.state === 'definitive-failure'
@@ -309,19 +314,19 @@ export function AuthorizedIdentityPresentation({
           revealResult: labels.revealResult,
           signOut: labels.signOut,
         }}
-        onRevealResult={pendingResult ? revealResult : undefined}
-        onRetry={interactionState === 'definitiveFailure' ? submitAttempt : undefined}
+        onRevealResult={hydrated && pendingResult ? revealResult : undefined}
+        onRetry={hydrated && interactionState === 'definitiveFailure' ? submitAttempt : undefined}
         onRetryAmbiguous={
-          interactionState === 'ambiguous' && ambiguousRetryReady
+          hydrated && interactionState === 'ambiguous' && ambiguousRetryReady
             ? submitAttempt
             : undefined
         }
         onSignal={
-          initialInteraction.available && interactionState === 'ready'
+          hydrated && initialInteraction.available && interactionState === 'ready'
             ? submitAttempt
             : undefined
         }
-        onSignOut={signOut}
+        onSignOut={hydrated ? signOut : undefined}
         presentation={presentations[interactionState]}
         state={interactionState}
       />
