@@ -51,7 +51,7 @@ npm run demo
 
 Open the two synthetic invitation URLs printed in the terminal in separate browser profiles. Stop with Ctrl-C and verify that the demo process and its disposable state are cleaned up. If startup or cleanup fails, use the [demo instructions](docs/SETUP.md#2-try-it-locally-first) before retrying.
 
-Node.js 22.13+ is the declared minimum; recorded validation used Node 26.10.0 on macOS. The minimum and Linux owner tooling remain unverified; the local demo and maintenance CLI do not support native Windows. `npm run dev` is an inert visual preview. Optional automated demo checks and their limits are in the setup guide.
+Node.js 24.21+ is required for local tooling and builds; `.node-version` pins 24.21.0, matching CI. Node 22 users must upgrade before installing dependencies. Cloudflare Workers keep their separate compatibility settings. The local demo and maintenance CLI do not support native Windows. `npm run dev` is an inert visual preview. Optional automated demo checks and their limits are in the setup guide.
 
 ## Give it a home
 

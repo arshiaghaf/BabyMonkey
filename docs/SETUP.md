@@ -28,7 +28,7 @@ Project source and the included original monkey artwork use the [MIT license](..
 
 ## 2. Try it locally first
 
-Install Node.js **22.13 or newer**, npm, and a current browser. An independent clean `npm ci` and three fake demo outcomes passed on the preceding direct-entry snapshot with Node 26.10.0/npm 11.19.1; dependencies are unchanged in this helper follow-up, but a clean install of these exact bytes was not rerun. The declared Node 22 minimum remains unverified. The earlier demo-runner `EPERM` cleanup failure was reproduced and corrected on the direct-entry snapshot; all three fake outcomes and 21 setup/lifecycle checks passed afterward. The optional browser suite needs Chromium (`npx playwright install chromium`). Go 1.25+ is needed for relay checks, not this first demo.
+Install Node.js **24.21 or newer**, npm, and a current browser. The root `.node-version` pins 24.21.0, matching CI; upgrade Node 22 before installing dependencies. This requirement covers local tooling and builds, while Cloudflare Workers use the supplied compatibility settings. The optional browser suite needs Chromium (`npx playwright install chromium`). Go 1.25+ is needed for relay checks, not this first demo.
 
 In a terminal, change to this checkout's `site` directory:
 
