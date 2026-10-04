@@ -9,19 +9,28 @@ updates:
       timezone: Etc/UTC
     open-pull-requests-limit: 3
     groups:
-      nextjs:
+      app-minor-and-patch:
         applies-to: version-updates
         patterns:
+          - "@opennextjs/cloudflare"
+          - "@simplewebauthn/*"
           - next
           - eslint-config-next
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+          - server-only
         update-types:
           - minor
           - patch
-      react:
+      tooling-minor-and-patch:
         applies-to: version-updates
+        dependency-type: development
         patterns:
-          - react
-          - react-dom
+          - "*"
+        exclude-patterns:
+          - eslint-config-next
           - "@types/react"
           - "@types/react-dom"
         update-types:
@@ -36,6 +45,15 @@ updates:
       time: "09:00"
       timezone: Etc/UTC
     open-pull-requests-limit: 3
+    groups:
+      tooling-minor-and-patch:
+        applies-to: version-updates
+        dependency-type: development
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: npm
     directory: /maintenance/maintenance-cli
@@ -45,6 +63,15 @@ updates:
       time: "09:00"
       timezone: Etc/UTC
     open-pull-requests-limit: 3
+    groups:
+      tooling-minor-and-patch:
+        applies-to: version-updates
+        dependency-type: development
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   # The relay currently has no third-party modules; cover future additions.
   - package-ecosystem: gomod
