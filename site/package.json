@@ -30,7 +30,7 @@
     "test:browser:production": "node scripts/run-cloudflare-browser-tests.mjs"
   },
   "dependencies": {
-    "@opennextjs/cloudflare": "1.20.2",
+    "@opennextjs/cloudflare": "1.20.7",
     "@simplewebauthn/browser": "13.3.0",
     "@simplewebauthn/server": "13.3.2",
     "next": "16.3.8",
