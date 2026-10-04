@@ -16,6 +16,8 @@ const scratch=process.env.BABYMONKEY_RUNTIME_SCRATCH;
 await validateOwnedDirectory(scratch);
 const origin='https://app.owner-domain.net';
 let mf,tls,proxy,test;
+const requests = new Set();
+const requestControllers = new Set();
 const run=(cmd,args)=>{const result=spawnSync(cmd,args,{cwd:root,encoding:'utf8',env:{...process.env,CLOUDFLARE_CF_FETCH_ENABLED:'false',WRANGLER_SEND_METRICS:'false',WRANGLER_SEND_ERROR_REPORTS:'false'}});if(result.status!==0)throw new Error(result.stderr||result.stdout);return result.stdout;};
 const listen=server=>new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',()=>resolve(server.address().port));});
 const stop=server=>server?new Promise(resolve=>{server.closeAllConnections?.();server.close(resolve);}):undefined;
@@ -39,20 +41,27 @@ try {
   await db.prepare('UPDATE notification_control SET enabled=1,revision=2,updated_at_ms=? WHERE singleton=1').bind(now).run();
   for(const flags of [{BABYMONKEY_LOCAL_DEMO:'1'},{BABYMONKEY_FAKE_DELIVERY:'confirmed'},{BABYMONKEY_RP_ID:'localhost',BABYMONKEY_ORIGIN:'http://localhost:3000'}]) {
     const rejected=new Miniflare(convertV4MiniflareOptions({cf:false,telemetry:{enabled:false},resourceTmpPath:path.join(scratch,'rejected-runtime-'+Object.keys(flags)[0]),workers:[{...appOptions,bindings:{...config.vars,...flags}},...auxiliary]}));
-    try {const response=await (await rejected.getWorker('application')).fetch(origin); if(response.status!==404)console.error(await response.text());assert.equal(response.status,404);} finally {await rejected.dispose();}
+    try {const response=await (await rejected.getWorker('application')).fetch(origin); const body=await response.text();if(response.status!==404)console.error(body);assert.equal(response.status,404);} finally {await rejected.dispose();}
   }
   console.log('Correct production bindings accepted; local authority flags and local origins rejected by actual artifact.');
   run('openssl',['req','-x509','-newkey','rsa:2048','-nodes','-keyout',path.join(scratch,'key.pem'),'-out',path.join(scratch,'cert.pem'),'-days','1','-subj','/CN=app.owner-domain.net']);
-  tls=createHTTPSServer({key:await readFile(path.join(scratch,'key.pem')),cert:await readFile(path.join(scratch,'cert.pem'))},async(req,res)=>{
+  const handleRequest=async(req,res)=>{
+    const controller=new AbortController();requestControllers.add(controller);
+    const cancel=()=>controller.abort();res.once('close',cancel);
     try {if(req.headers.host!=='app.owner-domain.net'){res.writeHead(404);res.end();return;}
       const body=['GET','HEAD'].includes(req.method)?undefined:Buffer.concat(await Array.fromAsync(req));
-      const response=await (await mf.getWorker('application')).fetch(origin+req.url,{method:req.method,headers:req.headers,body,redirect:'manual'});
+      const response=await (await mf.getWorker('application')).fetch(origin+req.url,{method:req.method,headers:req.headers,body,redirect:'manual',signal:controller.signal});
       res.statusCode=response.status;response.headers.forEach((value,key)=>{if(!['set-cookie','content-encoding','content-length','transfer-encoding'].includes(key))res.setHeader(key,value);});
       const cookies=response.headers.getSetCookie();if(cookies.length)res.setHeader('set-cookie',cookies);
       // Browser cancellation must cancel the workerd response too, so disposal
       // does not wait forever for an unread response paused by backpressure.
       if(response.body)await pipeline(Readable.fromWeb(response.body),res);else res.end();
     }catch(error){if(res.destroyed)return;console.error(error);res.writeHead(500);res.end();}
+    finally{res.off('close',cancel);requestControllers.delete(controller);}
+  };
+  tls=createHTTPSServer({key:await readFile(path.join(scratch,'key.pem')),cert:await readFile(path.join(scratch,'cert.pem'))},(req,res)=>{
+    const request=handleRequest(req,res);requests.add(request);
+    request.finally(()=>requests.delete(request)).catch(error=>{console.error(error);process.exitCode=1;});
   });const tlsPort=await listen(tls);
   proxy=createHTTPServer((_req,res)=>{res.writeHead(403);res.end();});const sockets=new Set();
   proxy.on('connect',(req,socket,head)=>{if(req.url!=='app.owner-domain.net:443'){socket.end('HTTP/1.1 403 Forbidden\r\n\r\n');return;}const upstream=connect(tlsPort,'127.0.0.1',()=>{if(socket.destroyed){upstream.destroy();return;}socket.write('HTTP/1.1 200 Connection Established\r\n\r\n');upstream.write(head);socket.pipe(upstream);upstream.pipe(socket);});sockets.add(socket);sockets.add(upstream);socket.on('close',()=>{sockets.delete(socket);upstream.destroy();});socket.on('error',()=>upstream.destroy());upstream.on('close',()=>sockets.delete(upstream));upstream.on('error',()=>socket.destroy());});const proxyPort=await listen(proxy);
@@ -64,7 +73,9 @@ try {
   try {
     test?.kill('SIGTERM');
     console.log('Closing production browser proxy.'); await stop(proxy);
+    for(const controller of requestControllers)controller.abort();
     console.log('Closing production browser TLS server.'); await stop(tls);
+    console.log('Waiting for production browser request cleanup.'); await Promise.all(requests);
     console.log('Disposing production browser workerd/D1.'); await mf?.dispose();
     console.log('Production browser runtime cleanup completed.');
   } finally {
