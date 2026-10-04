@@ -5,6 +5,7 @@ import { createServer as createHTTPServer } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
 import { connect } from 'node:net';
 import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
@@ -48,8 +49,10 @@ try {
       const response=await (await mf.getWorker('application')).fetch(origin+req.url,{method:req.method,headers:req.headers,body,redirect:'manual'});
       res.statusCode=response.status;response.headers.forEach((value,key)=>{if(!['set-cookie','content-encoding','content-length','transfer-encoding'].includes(key))res.setHeader(key,value);});
       const cookies=response.headers.getSetCookie();if(cookies.length)res.setHeader('set-cookie',cookies);
-      if(response.body)Readable.fromWeb(response.body).pipe(res);else res.end();
-    }catch(error){console.error(error);res.writeHead(500);res.end();}
+      // Browser cancellation must cancel the workerd response too, so disposal
+      // does not wait forever for an unread response paused by backpressure.
+      if(response.body)await pipeline(Readable.fromWeb(response.body),res);else res.end();
+    }catch(error){if(res.destroyed)return;console.error(error);res.writeHead(500);res.end();}
   });const tlsPort=await listen(tls);
   proxy=createHTTPServer((_req,res)=>{res.writeHead(403);res.end();});const sockets=new Set();
   proxy.on('connect',(req,socket,head)=>{if(req.url!=='app.owner-domain.net:443'){socket.end('HTTP/1.1 403 Forbidden\r\n\r\n');return;}const upstream=connect(tlsPort,'127.0.0.1',()=>{if(socket.destroyed){upstream.destroy();return;}socket.write('HTTP/1.1 200 Connection Established\r\n\r\n');upstream.write(head);socket.pipe(upstream);upstream.pipe(socket);});sockets.add(socket);sockets.add(upstream);socket.on('close',()=>{sockets.delete(socket);upstream.destroy();});socket.on('error',()=>upstream.destroy());upstream.on('close',()=>sockets.delete(upstream));upstream.on('error',()=>socket.destroy());});const proxyPort=await listen(proxy);
@@ -57,4 +60,15 @@ try {
   test=spawn(process.execPath,[path.join(root,'node_modules/@playwright/test/cli.js'),'test','--config','playwright.cloudflare.config.ts',...process.argv.slice(2)],{cwd:root,stdio:'inherit',env:{...process.env,BABYMONKEY_TEST_PROXY:`http://127.0.0.1:${proxyPort}`,BABYMONKEY_TEST_INVITATION:token,BABYMONKEY_TEST_ORIGIN:origin}});
   process.exitCode=await new Promise(resolve=>test.once('exit',code=>resolve(code??1)));
   for(const socket of sockets)socket.destroy();
-} finally {test?.kill('SIGTERM');await stop(proxy);await stop(tls);await mf?.dispose();}
+} finally {
+  try {
+    test?.kill('SIGTERM');
+    console.log('Closing production browser proxy.'); await stop(proxy);
+    console.log('Closing production browser TLS server.'); await stop(tls);
+    console.log('Disposing production browser workerd/D1.'); await mf?.dispose();
+    console.log('Production browser runtime cleanup completed.');
+  } finally {
+    // Readiness has already been delivered; release the parent channel after cleanup.
+    if (process.connected) process.disconnect();
+  }
+}
