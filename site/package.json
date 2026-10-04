@@ -56,5 +56,14 @@
     "typescript": "5.9.3",
     "vitest": "4.1.11",
     "wrangler": "4.125.0"
+  },
+  "overrides": {
+    "miniflare": {
+      "undici": "7.29.1",
+      "sharp": "0.35.5"
+    },
+    "jsdom": {
+      "undici": "8.10.2"
+    }
   }
 }
