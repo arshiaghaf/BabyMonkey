@@ -1,0 +1,57 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /site
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 3
+    groups:
+      nextjs:
+        applies-to: version-updates
+        patterns:
+          - next
+          - eslint-config-next
+        update-types:
+          - minor
+          - patch
+      react:
+        applies-to: version-updates
+        patterns:
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /maintenance/d1-rest-adapter
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: npm
+    directory: /maintenance/maintenance-cli
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 3
+
+  # The relay currently has no third-party modules; cover future additions.
+  - package-ecosystem: gomod
+    directory: /relay
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 1
