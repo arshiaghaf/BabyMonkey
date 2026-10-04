@@ -26,6 +26,12 @@ for (const config of ['playwright.config.ts', 'playwright.demo.config.ts', 'play
         await writeFile(path.join(scratch, 'ownership.spec.ts'), `
           import { test } from ${JSON.stringify(path.resolve('node_modules/@playwright/test/index.mjs'))};
           import { writeFile } from 'node:fs/promises';
+          test.afterEach(async ({}, info) => {
+            // Teardown writes must finish before the parent removes its output.
+            await new Promise(resolve => setTimeout(resolve, 750));
+            await writeFile(info.outputPath('teardown.txt'), 'owned teardown');
+            await writeFile(${JSON.stringify(path.join(scratch, 'teardown-completed'))}, 'complete');
+          });
           test('synthetic artifact', async ({}, info) => {
             await writeFile(info.outputPath('synthetic.txt'), 'owned');
             console.log('ARTIFACT_READY');
@@ -56,6 +62,7 @@ for (const config of ['playwright.config.ts', 'playwright.demo.config.ts', 'play
         assert.equal(result.termination, null, output);
         assert.equal(result.code, signal === 'SIGINT' ? 130 : signal === 'SIGTERM' ? 143 : 0, output);
         await stopOwnedGroup(child);
+        assert.equal(await readFile(path.join(scratch, 'teardown-completed'), 'utf8'), 'complete', output);
         for (const directory of outputs) await assert.rejects(readFile(path.join(path.dirname(directory), 'results/.last-run.json')), /ENOENT/);
         // Check the root itself: absent output alone would miss leaked scratch.
         for (const directory of outputs) await assert.rejects(realpath(path.dirname(directory)), /ENOENT/, directory);

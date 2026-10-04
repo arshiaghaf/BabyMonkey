@@ -10,7 +10,9 @@ export function ownedBrowserOutput(mode) {
   if (!['preview', 'demo', 'production'].includes(mode)) throw new Error('Unknown browser output mode.');
   const root = mkdtempSync(path.join(realpathSync(os.tmpdir()), `babymonkey-browser-${mode}-`));
   const { dev, ino } = lstatSync(root);
+  let interruptedExitCode;
   const cleanup = () => {
+    if (interruptedExitCode !== undefined) process.exitCode = interruptedExitCode;
     // Exit handlers cannot await. A small filesystem-only child bounds cleanup
     // to five seconds; it receives only this internally allocated root/identity.
     // Its separate group lets cleanup finish while the runner stops its group.
@@ -31,10 +33,14 @@ export function ownedBrowserOutput(mode) {
   };
   process.once('exit', cleanup);
   const interrupted = signal => {
-    // Playwright handles SIGINT cooperatively. Keep its teardown when present;
-    // otherwise exit with the conventional signal status after owned cleanup.
-    if (signal === 'SIGINT' && process.listenerCount(signal) > 1) return;
-    process.exit(signal === 'SIGINT' ? 130 : 143);
+    interruptedExitCode ??= signal === 'SIGINT' ? 130 : 143;
+    // Let Playwright finish worker teardown before deleting output. Its SIGINT
+    // path is cooperative; use it for SIGTERM too, retaining exit status 143.
+    if (process.listenerCount('SIGINT') > 1) {
+      if (signal === 'SIGTERM') process.emit('SIGINT');
+      return;
+    }
+    process.exit(interruptedExitCode);
   };
   process.on('SIGINT', () => interrupted('SIGINT'));
   process.once('SIGTERM', () => interrupted('SIGTERM'));
