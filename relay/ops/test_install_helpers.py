@@ -278,6 +278,54 @@ class TLSTests(unittest.TestCase):
             cert, key = make_cert(tmp, "relay.example.test", "anchor")
             tls.validate_pair(cert, key, "relay.example.test", trust=True, trust_store=cert)
 
+    def test_hostname_mismatch_preserves_installed_pair_for_both_exit_behaviors(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cert, key = make_cert(tmp, "relay.example.test", "one")
+            wrong_cert, wrong_key = make_cert(tmp, "other.example.test", "wrong")
+            service = FakeService()
+            tls.install_pair(cert, key, tmp, "relay.example.test", os.getuid(), os.getgid(), service,
+                             trust=False, root_uid=os.getuid())
+            before = {path.name: path.read_bytes() for path in Path(tmp).iterdir()}
+            service.actions.clear()
+            service.running = True
+            actual_run = subprocess.run
+
+            for exit_code in (0, 1):
+                def checkhost_result(command, **kwargs):
+                    if command[:2] == ["openssl", "x509"]:
+                        self.assertEqual(command[-2:], ["-checkhost", "relay.example.test"])
+                        self.assertTrue(kwargs["check"])
+                        output = b"Hostname relay.example.test does NOT match certificate\n"
+                        if exit_code:
+                            raise subprocess.CalledProcessError(exit_code, command, output=output)
+                        return subprocess.CompletedProcess(command, exit_code, stdout=output, stderr=b"")
+                    return actual_run(command, **kwargs)
+
+                with self.subTest(exit_code=exit_code), mock.patch.object(tls.subprocess, "run", side_effect=checkhost_result):
+                    with self.assertRaises(tls.SetupError):
+                        tls.install_pair(wrong_cert, wrong_key, tmp, "relay.example.test", os.getuid(), os.getgid(),
+                                         service, trust=False, root_uid=os.getuid())
+                self.assertEqual(service.actions, [])
+                self.assertTrue(service.running)
+                self.assertEqual({path.name: path.read_bytes() for path in Path(tmp).iterdir()}, before)
+
+    def test_hostname_check_rejects_missing_or_unrecognized_success_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cert, key = make_cert(tmp, "relay.example.test", "one")
+            for output in (b"", b"Hostname other.example.test does match certificate\n",
+                           b"Hostname relay.example.test does match certificate\nunexpected output\n"):
+                result = subprocess.CompletedProcess([], 0, stdout=output, stderr=b"")
+                with self.subTest(output=output), mock.patch.object(tls.subprocess, "run", return_value=result):
+                    with self.assertRaises(tls.SetupError):
+                        tls.validate_pair(cert, key, "relay.example.test", trust=False)
+
+    def test_hostname_check_accepts_matching_wildcard_certificate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cert, key = make_cert(tmp, "*.example.test", "wildcard")
+            tls.validate_pair(cert, key, "relay.example.test", trust=False)
+            with self.assertRaises(tls.SetupError):
+                tls.validate_pair(cert, key, "relay.example.org", trust=False)
+
     def test_failed_check_rolls_back_prior_pair(self):
         with tempfile.TemporaryDirectory() as tmp:
             cert, key = make_cert(tmp, "relay.example.test", "one")
