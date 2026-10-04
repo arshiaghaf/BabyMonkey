@@ -5,6 +5,9 @@ The `CI` workflow runs on every pull request targeting `main`, every push to
 documentation and dependency updates, so their status names can be required
 without path-filtered checks staying pending.
 
+Independent demo/preview browser suites and the renewal-hook syntax check still
+run after an earlier test fails. Earlier failures keep their job red.
+
 | Stable check name | Coverage |
 | --- | --- |
 | `Site checks` | ESLint, TypeScript, unit tests, local D1 migrations and authorization tests, synthetic Worker-to-Go mTLS, setup and runner lifecycle tests |

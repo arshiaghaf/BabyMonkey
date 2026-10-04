@@ -91,8 +91,10 @@ jobs:
       - name: Production artifact browser tests
         run: npm run test:browser:production
       - name: Provider-free demo browser tests
+        if: ${{ !cancelled() }}
         run: npm run test:browser:demo
       - name: Development preview browser tests
+        if: ${{ !cancelled() }}
         run: npm run test:browser:development
 
   d1-adapter:
@@ -174,4 +176,5 @@ jobs:
         working-directory: .
         run: python3 -B -m unittest discover -s relay/ops -p 'test_*.py'
       - name: Certificate renewal hook shell syntax
+        if: ${{ !cancelled() }}
         run: sh -n ops/babymonkey-certbot-deploy-hook
