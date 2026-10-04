@@ -8,7 +8,7 @@ import type {
   PublicKeyCredentialCreationOptionsJSON,
   PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/browser';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import {
   PublicAuthShell,
   type PublicAuthShellState,
@@ -25,6 +25,9 @@ type AuthenticationOptionsResponse = {
 };
 
 const csrfHeaderName = 'x-bm-csrf';
+const subscribeToHydration = () => () => {};
+const clientHydrated = () => true;
+const serverHydrated = () => false;
 
 async function readJson(response: Response): Promise<unknown> {
   if (!response.ok || response.headers.get('content-type') !== 'application/json') {
@@ -57,6 +60,8 @@ function isOptionsResponse(
 
 export function IdentityGateway() {
   const [state, setState] = useState<PublicAuthShellState>('ready');
+  // Server-rendered controls must wait until React attaches their handlers.
+  const hydrated = useSyncExternalStore(subscribeToHydration, clientHydrated, serverHydrated);
 
   useEffect(() => {
     const revalidateAfterHistoryRestore = (event: PageTransitionEvent) => {
@@ -116,5 +121,5 @@ export function IdentityGateway() {
     }
   };
 
-  return <PublicAuthShell onAuthenticate={authenticate} state={state} />;
+  return <PublicAuthShell onAuthenticate={hydrated ? authenticate : undefined} state={state} />;
 }
