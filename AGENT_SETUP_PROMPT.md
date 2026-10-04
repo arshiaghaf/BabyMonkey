@@ -35,8 +35,8 @@ execution.
 
 Inspect my OS, shell, Git, Node/npm, browser, available ports, and existing
 local state before asking questions. The guide assumes a macOS owner computer
-and Ubuntu/systemd VPS. Node 22.13+ is the declared minimum, but recorded
-validation used Node 26.10.0 on macOS; do not claim minimum-version or Linux
+and Ubuntu/systemd VPS. Node 24.21+ is required for local tooling and builds;
+`.node-version` and CI pin 24.21.0. Do not claim Linux
 compatibility was tested. Native Windows is unsupported by the local demo and
 maintenance CLI. Go is needed later for relay checks. Explain any missing
 prerequisite and get approval before installing system tooling or incurring
