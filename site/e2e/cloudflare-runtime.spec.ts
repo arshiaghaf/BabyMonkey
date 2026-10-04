@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Response } from '@playwright/test';
 import {
   expectDevelopmentStylesExcluded,
   expectInfrastructureValuesExcluded,
@@ -243,7 +243,29 @@ test('completes local cancellation, registration, authentication, and sign-out w
   });
   await page.getByRole('button', { name: 'Verify' }).click();
   await expect(page.locator('[data-view="experience"]')).toHaveAttribute('data-state', 'ready');
-  const authorizedDocument = await page.reload();
+  let releaseScripts!: () => void;
+  const scriptsReleased = new Promise<void>((resolve) => { releaseScripts = resolve; });
+  await page.route('**/*', async (route) => {
+    if (route.request().resourceType() === 'script') await scriptsReleased;
+    await route.continue();
+  });
+  let authorizedDocument: Response | null = null;
+  try {
+    authorizedDocument = await page.reload({ waitUntil: 'commit' });
+    await expect(page.locator('[data-view="experience"]')).toHaveAttribute('data-state', 'ready');
+    await expect(page.getByRole('button', {
+      name: 'Ask the recipient to reach out gently',
+    })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Sign out' })).toBeDisabled();
+    expect(invitationRequests.filter(({ url }) => new URL(url).pathname === '/api/interaction')).toHaveLength(0);
+  } finally {
+    releaseScripts();
+    await page.unrouteAll({ behavior: 'wait' });
+  }
+  await expect(page.getByRole('button', {
+    name: 'Ask the recipient to reach out gently',
+  })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Sign out' })).toBeEnabled();
   expect(authorizedDocument?.headers()['cache-control']).toContain('no-store');
   await expect(page.locator('[data-view="experience"]')).toHaveAttribute('data-state', 'ready');
   expect(identityResponseCacheHeaders.length).toBeGreaterThanOrEqual(4);
@@ -271,19 +293,15 @@ test('completes local cancellation, registration, authentication, and sign-out w
     name: 'Ask the recipient to reach out gently',
   });
   await expect(monkeyAction).toBeEnabled();
+  await expect(page.locator('.rosewater-header')).toHaveCSS('animation-duration', '0.78s');
+  await expect(page.locator('.rosewater-stage')).toHaveCSS('animation-duration', '0.9s');
   const mobilePresentation = await page.locator('[data-view="experience"]').evaluate((view) => {
     const heading = view.querySelector<HTMLElement>('h1')!;
-    const header = view.querySelector<HTMLElement>('header')!;
-    const stage = view.querySelector<HTMLElement>('main')!;
     return {
-      headerAnimationDuration: getComputedStyle(header).animationDuration,
       headingLineHeight: Number.parseFloat(getComputedStyle(heading).lineHeight),
-      stageAnimationDuration: getComputedStyle(stage).animationDuration,
     };
   });
-  expect(mobilePresentation.headerAnimationDuration).toBe('0.78s');
   expect(mobilePresentation.headingLineHeight).toBeCloseTo(40.04, 1);
-  expect(mobilePresentation.stageAnimationDuration).toBe('0.9s');
 
   await page.setViewportSize({ width: 1440, height: 900 });
   const desktopPresentation = await page.locator('[data-view="experience"]').evaluate((view) => {
@@ -323,11 +341,8 @@ test('completes local cancellation, registration, authentication, and sign-out w
   await page.setViewportSize({ width: 440, height: 956 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('[data-view="experience"]')).toBeVisible();
-  const reducedMotion = await page.locator('[data-view="experience"]').evaluate((view) => ({
-    headerAnimation: getComputedStyle(view.querySelector<HTMLElement>('header')!).animationName,
-    stageAnimation: getComputedStyle(view.querySelector<HTMLElement>('main')!).animationName,
-  }));
-  expect(reducedMotion).toEqual({ headerAnimation: 'none', stageAnimation: 'none' });
+  await expect(page.locator('.rosewater-header')).toHaveCSS('animation-name', 'none');
+  await expect(page.locator('.rosewater-stage')).toHaveCSS('animation-name', 'none');
 
   const interactionCount = () => invitationRequests.filter(({ url }) => (
     new URL(url).pathname === '/api/interaction'
