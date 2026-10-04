@@ -1,0 +1,177 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+  CLOUDFLARE_CF_FETCH_ENABLED: 'false'
+  WRANGLER_SEND_METRICS: 'false'
+  WRANGLER_SEND_ERROR_REPORTS: 'false'
+  GOTOOLCHAIN: local
+
+jobs:
+  site:
+    name: Site checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.21.0'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.27.1'
+          cache-dependency-path: relay/go.mod
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Local D1 tests
+        run: npm run test:d1
+      - name: Warm the relay harness build cache
+        working-directory: relay
+        run: |
+          echo "BABYMONKEY_GO_CACHE=$(go env GOCACHE)" >> "$GITHUB_ENV"
+          go test -run '^$' ./internal/relay
+      - name: Synthetic Worker-to-relay mTLS tests
+        run: npm run test:relay:local
+      - name: Setup and runner lifecycle tests
+        run: npm run test:setup
+
+  site-browser:
+    name: Cloudflare build and browsers
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.21.0'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Install Chromium and its runner dependencies
+        run: npx --no-install playwright install --with-deps chromium
+      # OpenNext runs the Next build before creating the Worker bundle.
+      - name: Build Cloudflare Worker
+        run: npm run build:cloudflare
+      - name: Audit the packaged artifact
+        run: npm run artifact:check
+      # This suite packages offline and uses local workerd/D1 with fake delivery.
+      - name: Production artifact browser tests
+        run: npm run test:browser:production
+      - name: Provider-free demo browser tests
+        run: npm run test:browser:demo
+      - name: Development preview browser tests
+        run: npm run test:browser:development
+
+  d1-adapter:
+    name: D1 adapter checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: maintenance/d1-rest-adapter
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.21.0'
+          cache: npm
+          cache-dependency-path: maintenance/d1-rest-adapter/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Lint, typecheck, and tests
+        run: npm run check
+
+  maintenance-cli:
+    name: Maintenance CLI checks
+    # The real attached-TTY suite uses macOS /usr/bin/expect and skips on Linux.
+    runs-on: macos-15
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: maintenance/maintenance-cli
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.21.0'
+          cache: npm
+          cache-dependency-path: maintenance/maintenance-cli/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Lint, typecheck, unit, integration, and attached-TTY tests
+        run: |
+          test -x /usr/bin/expect
+          npm run lint
+          npm run typecheck
+          npm test
+      - name: Audit source leakage
+        run: npm run leakage:check
+      - name: Build and inspect package contents
+        run: npm run package:check
+
+  relay:
+    name: Relay and setup helpers
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: relay
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.27.1'
+          cache-dependency-path: relay/go.mod
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14.8'
+      - name: Go race tests
+        run: go test -race -count=1 ./...
+      - name: Go vet
+        run: go vet ./...
+      - name: Build relay commands
+        run: go build ./cmd/...
+      - name: Synthetic Python setup-helper tests
+        working-directory: .
+        run: python3 -B -m unittest discover -s relay/ops -p 'test_*.py'
+      - name: Certificate renewal hook shell syntax
+        run: sh -n ops/babymonkey-certbot-deploy-hook
