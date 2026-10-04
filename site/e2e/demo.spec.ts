@@ -10,6 +10,24 @@ async function makeVirtualUser(browser: Browser): Promise<{ context: BrowserCont
   }});
   return { context, page, authenticatorId, client };
 }
+test('verification stays unavailable until the authentication handler is hydrated', async ({ page }) => {
+  let releaseScripts!: () => void;
+  const scriptsReleased = new Promise<void>((resolve) => { releaseScripts = resolve; });
+  await page.route('**/*', async (route) => {
+    if (route.request().resourceType() === 'script') await scriptsReleased;
+    await route.continue();
+  });
+  try {
+    await page.goto('/', { waitUntil: 'commit' });
+    await expect(page.locator('[data-view="public-auth-shell"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Verify' })).toBeDisabled();
+    releaseScripts();
+    await expect(page.getByRole('button', { name: 'Verify' })).toBeEnabled();
+  } finally {
+    releaseScripts();
+    await page.unrouteAll({ behavior: 'wait' });
+  }
+});
 test('two synthetic users enroll independently and the fixed signal uses fake local delivery', async ({ browser }) => {
   const expectedResult = process.env.BABYMONKEY_TEST_OUTCOME === 'ambiguous' ? 'Your little monkey may already be on its way.' : process.env.BABYMONKEY_TEST_OUTCOME === 'definitive-failure' ? 'Nothing was sent yet.' : 'Your little monkey was sent.';
   const firstToken = process.env.BABYMONKEY_DEMO_INVITE_1;

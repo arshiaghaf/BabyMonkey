@@ -100,8 +100,13 @@ def validate_pair(cert, key, hostname, *, trust=True, trust_store="/etc/ssl/cert
     try:
         context.load_cert_chain(cert, key)
         decoded = ssl._ssl._test_decode_cert(cert)
-        subprocess.run(["openssl", "x509", "-in", cert, "-noout", "-checkhost", hostname],
-                       check=True, capture_output=True, timeout=10)
+        hostname_check = subprocess.run(
+            ["openssl", "x509", "-in", cert, "-noout", "-checkhost", hostname],
+            check=True, capture_output=True, timeout=10)
+        # Older OpenSSL versions exit zero even when the hostname does not match.
+        # Require their explicit positive report as well; unknown output fails closed.
+        if hostname_check.stdout.strip() != f"Hostname {hostname} does match certificate".encode("ascii"):
+            raise SetupError("TLS certificate does not match the configured hostname")
         if ssl.cert_time_to_seconds(decoded["notBefore"]) > time.time() or ssl.cert_time_to_seconds(decoded["notAfter"]) <= time.time() + 86400:
             raise SetupError("Certificate is not currently valid for at least one day")
         if trust:
