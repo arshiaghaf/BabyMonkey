@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Response } from '@playwright/test';
 import {
   expectDevelopmentStylesExcluded,
   expectInfrastructureValuesExcluded,
@@ -243,7 +243,29 @@ test('completes local cancellation, registration, authentication, and sign-out w
   });
   await page.getByRole('button', { name: 'Verify' }).click();
   await expect(page.locator('[data-view="experience"]')).toHaveAttribute('data-state', 'ready');
-  const authorizedDocument = await page.reload();
+  let releaseScripts!: () => void;
+  const scriptsReleased = new Promise<void>((resolve) => { releaseScripts = resolve; });
+  await page.route('**/*', async (route) => {
+    if (route.request().resourceType() === 'script') await scriptsReleased;
+    await route.continue();
+  });
+  let authorizedDocument: Response | null = null;
+  try {
+    authorizedDocument = await page.reload({ waitUntil: 'commit' });
+    await expect(page.locator('[data-view="experience"]')).toHaveAttribute('data-state', 'ready');
+    await expect(page.getByRole('button', {
+      name: 'Ask the recipient to reach out gently',
+    })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Sign out' })).toBeDisabled();
+    expect(invitationRequests.filter(({ url }) => new URL(url).pathname === '/api/interaction')).toHaveLength(0);
+  } finally {
+    releaseScripts();
+    await page.unrouteAll({ behavior: 'wait' });
+  }
+  await expect(page.getByRole('button', {
+    name: 'Ask the recipient to reach out gently',
+  })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Sign out' })).toBeEnabled();
   expect(authorizedDocument?.headers()['cache-control']).toContain('no-store');
   await expect(page.locator('[data-view="experience"]')).toHaveAttribute('data-state', 'ready');
   expect(identityResponseCacheHeaders.length).toBeGreaterThanOrEqual(4);
