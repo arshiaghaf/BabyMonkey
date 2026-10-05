@@ -107,13 +107,12 @@ export class MaintenanceService {
 
     const invitationIdBytes = this.#randomBytes(18);
     const tokenBytes = this.#randomBytes(32);
-    let token = '';
     try {
       if (invitationIdBytes.length !== 18 || tokenBytes.length < 32) {
         throw new MaintenanceError('contradictory-state');
       }
       const invitationId = invitationIdBytes.toString('base64url');
-      token = tokenBytes.toString('base64url');
+      const token = tokenBytes.toString('base64url');
       const tokenHash = createHash('sha256').update(token, 'utf8').digest('hex').toLowerCase();
       const entry: JournalEntry = {
         invitationId,
@@ -163,7 +162,6 @@ export class MaintenanceService {
     } finally {
       invitationIdBytes.fill(0);
       tokenBytes.fill(0);
-      token = '';
     }
   }
 
