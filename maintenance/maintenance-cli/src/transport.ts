@@ -13,20 +13,15 @@ export const createCloudflareTransport = (
 ): D1RestTransport => {
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/d1/database/${config.databaseId}/query`;
   return async (request) => {
-    let authorization: string | undefined = token.authorizationHeader();
-    try {
-      return await fetchImplementation(endpoint, {
-        method: request.method,
-        redirect: 'manual',
-        headers: {
-          ...request.headers,
-          authorization,
-        },
-        body: request.body,
-        signal: AbortSignal.any([request.signal, sessionSignal]),
-      });
-    } finally {
-      authorization = undefined;
-    }
+    return await fetchImplementation(endpoint, {
+      method: request.method,
+      redirect: 'manual',
+      headers: {
+        ...request.headers,
+        authorization: token.authorizationHeader(),
+      },
+      body: request.body,
+      signal: AbortSignal.any([request.signal, sessionSignal]),
+    });
   };
 };

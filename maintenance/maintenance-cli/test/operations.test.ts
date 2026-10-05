@@ -50,7 +50,10 @@ interface MutableState {
   notification: NotificationStatus;
 }
 
-const makeHarness = (states?: Partial<MutableState>) => {
+const makeHarness = (
+  states?: Partial<MutableState>,
+  randomBytes: (size: number) => Buffer = (size) => Buffer.alloc(size, size === 18 ? 0x11 : 0x22),
+) => {
   const state: MutableState = {
     principals: states?.principals ?? new Map([
       [1, principal(1, 'unfilled')],
@@ -135,12 +138,32 @@ const makeHarness = (states?: Partial<MutableState>) => {
     repository,
     journal,
     now: () => now,
-    randomBytes: (size) => Buffer.alloc(size, size === 18 ? 0x11 : 0x22),
+    randomBytes,
   });
   return { state, status, repository, journal, service };
 };
 
 describe('MaintenanceService', () => {
+  it.each([false, true])('wipes invitation buffers after provider failure=%s', async (providerFails) => {
+    const buffers: Buffer[] = [];
+    const harness = makeHarness(undefined, (size) => {
+      const bytes = Buffer.alloc(size, size === 18 ? 0x11 : 0x22);
+      buffers.push(bytes);
+      return bytes;
+    });
+    if (providerFails) {
+      harness.repository.createInvitation = async () => { throw new Error('provider denial'); };
+      await expect(harness.service.createInvitation(1)).rejects.toMatchObject({
+        code: 'mutation-not-confirmed',
+      });
+    } else {
+      const presentation = await harness.service.createInvitation(1);
+      expect(presentation.url).toContain(Buffer.alloc(32, 0x22).toString('base64url'));
+    }
+    expect(buffers).toHaveLength(2);
+    expect(buffers.map((bytes) => bytes.every((value) => value === 0))).toEqual([true, true]);
+  });
+
   it('reconciles a committed invitation even when the repository returns false', async () => {
     const { service, state, journal } = makeHarness();
     const presentation = await service.createInvitation(1);
