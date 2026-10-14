@@ -17,6 +17,12 @@ const presentationStart = presentationSource.indexOf('export const protectedPres
 const presentationEnd = presentationSource.indexOf('export function isProtectedAssetId');
 if (presentationStart < 0 || presentationEnd <= presentationStart) throw new Error('Protected presentation boundary missing.');
 const forbiddenClient = [...new Set([...presentationSource.slice(presentationStart,presentationEnd).matchAll(/'([^'\n]+)'/g)].map(match => match[1]).filter(value => value.length >= 10 && !value.startsWith('/media/') && !/^[A-Za-z0-9]{32}$/.test(value)))];
+// Generated draft-mode authority belongs only in the server bundle. Never
+// include these values in diagnostics, client assets, or public files.
+const previewProps = JSON.parse(await readFile(path.join(root,'.next/server/preview-props.json'),'utf8'));
+const forbiddenPreviewProps = ['previewModeId', 'previewModeSigningKey', 'previewModeEncryptionKey']
+  .map(key => previewProps[key]);
+if (forbiddenPreviewProps.some(value => typeof value !== 'string' || !value)) throw new Error('Missing generated preview props.');
 for (const file of all) {
   const data = await readFile(file);
   for (const marker of forbiddenBuild) if (data.includes(marker)) throw new Error('Development fake authority in production artifact.');
@@ -25,6 +31,7 @@ for (const file of staticFiles) {
   if (file.endsWith('.map')) throw new Error('Client source map in production artifact.');
   const data = await readFile(file);
   for (const marker of forbiddenClient) if (data.includes(marker)) throw new Error('Protected copy in client asset.');
+  for (const marker of forbiddenPreviewProps) if (data.includes(marker)) throw new Error('Draft-mode authority in public asset.');
 }
 for (const file of [...await filesBelow(path.join(root,'protected-assets')), ...await filesBelow(path.join(root,'public'))]) {
   if (!file.endsWith('.png')) continue;
