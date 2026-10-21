@@ -16,8 +16,8 @@ run after an earlier test fails. Earlier failures keep their job red.
 | `Maintenance CLI checks` | ESLint, TypeScript, unit and integration tests, actual macOS attached-TTY lifecycle tests, source leakage audit, bundle build and package dry run |
 | `Relay and setup helpers` | Go race tests, vet, command builds, synthetic Python installer/preflight tests, certificate renewal hook syntax |
 
-Node.js is pinned to 24.21.0 (LTS) in CI and `.node-version`; all three npm
-packages require Node >=24.21.0 and use `@types/node` 24.19.1. Go is pinned to 1.27.3, and Python to 3.14.8.
+Node.js is pinned to 24.22.1 (LTS) in CI and `.node-version`; all three npm
+packages require Node >=24.22.1 and use `@types/node` 24.19.1. Go is pinned to 1.27.3, and Python to 3.14.8.
 GitHub Actions are pinned to immutable release commit SHAs. npm downloads are
 cached by the relevant lockfile; Go caches are keyed from `relay/go.mod` (the
 relay has no external modules or `go.sum`). Installs use `npm ci` and do not
