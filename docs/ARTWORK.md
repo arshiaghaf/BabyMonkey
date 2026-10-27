@@ -23,3 +23,14 @@ This inventory identifies the exact artwork bytes retained in the local release 
 | [site/public/apple-touch-icon.png](../site/public/apple-touch-icon.png) | `1d507674315e5922af766d5f7dbe603405671c681287bdf840e8c4d3ba409433` |
 | [site/public/favicon-16.png](../site/public/favicon-16.png) | `45b9fc09336638549a31a1dc4229d8ade4b42755d86ad75485390ade45343ca4` |
 | [site/public/favicon-32.png](../site/public/favicon-32.png) | `5434f7093ceb0b2e339f12eab6bf703ab10270537d4bbb26bbd615e55f12cd6e` |
+
+## README icon
+
+The README header uses the owner-supplied Near icon, exported from its Icon
+Composer document in the light/default macOS appearance with Icon Composer 27.2.
+The 256 × 256 PNG is displayed at 96 pixels. This documentation asset does not
+replace application icons or the original protected monkey artwork.
+
+| Asset | SHA-256 |
+| --- | --- |
+| [docs/images/near-icon.png](images/near-icon.png) | `7a4dc952a58149871cd004c67d8792072a7cd648eba46b4fd4bee07f7c560017` |
