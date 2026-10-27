@@ -33,4 +33,4 @@ replace application icons or the original protected monkey artwork.
 
 | Asset | SHA-256 |
 | --- | --- |
-| [docs/images/near-icon.png](images/near-icon.png) | `7a4dc952a58149871cd004c67d8792072a7cd648eba46b4fd4bee07f7c560017` |
+| [docs/images/near-icon.png](images/near-icon.png) | `47156fe863345a51739b53297c0d70275f44434af0738b42100ea65178b6b472` |
