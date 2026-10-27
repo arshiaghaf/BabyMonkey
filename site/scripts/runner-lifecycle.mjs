@@ -17,7 +17,7 @@ export async function ownedDirectory(prefix) {
 export async function validateOwnedDirectory(directory) {
   if (!directory) throw new Error('Missing parent-owned runner directory.');
   const entry = await lstat(directory);
-  if (!entry.isDirectory() || entry.isSymbolicLink() || entry.uid !== process.getuid() || (entry.mode & 0o777) !== 0o700 || await realpath(directory) !== directory || path.dirname(directory) !== await realpath(os.tmpdir()) || !/^babymonkey-(?:demo-run|production-runtime)-/.test(path.basename(directory))) throw new Error('Refusing redirected or unowned runner directory.');
+  if (!entry.isDirectory() || entry.isSymbolicLink() || entry.uid !== process.getuid() || (entry.mode & 0o777) !== 0o700 || await realpath(directory) !== directory || path.dirname(directory) !== await realpath(os.tmpdir()) || !/^near-(?:demo-run|production-runtime)-/.test(path.basename(directory))) throw new Error('Refusing redirected or unowned runner directory.');
 }
 export async function removeOwnedDirectory(directory) {
   if (!directory) return;

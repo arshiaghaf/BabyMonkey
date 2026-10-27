@@ -43,7 +43,7 @@ test('serves only the public shell before local Workers authorization', async ({
   expect(documentResponse?.headers()['cache-control']).toContain('no-store');
   await page.waitForLoadState('networkidle');
 
-  await expect(page).toHaveTitle('Baby Monkey');
+  await expect(page).toHaveTitle('Near');
   await expect(page.locator('[data-view="public-auth-shell"]')).toBeVisible();
   await expect(page.getByRole('heading', {
     name: 'This little corner has just one person in mind.',
@@ -191,7 +191,7 @@ test('completes local cancellation, registration, authentication, and sign-out w
   page,
   request,
 }) => {
-  const invitation = process.env.BABYMONKEY_TEST_INVITATION;
+  const invitation = process.env.NEAR_TEST_INVITATION;
   expect(invitation).toMatch(/^[A-Za-z0-9_-]{43}$/u);
   const invitationRequests: Array<{ method: string; url: string }> = [];
   const identityResponseCacheHeaders: string[] = [];
@@ -390,7 +390,7 @@ test('completes local cancellation, registration, authentication, and sign-out w
   await expect(page.locator('[data-view="experience"]')).toHaveCount(0);
   await page.goto('/');
   await expect(page.locator('[data-auth-state="ready"]')).toBeVisible();
-  const isolated = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, proxy: { server: process.env.BABYMONKEY_TEST_PROXY! } });
+  const isolated = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, proxy: { server: process.env.NEAR_TEST_PROXY! } });
   const unauthorizedRsc = await isolated.request.get('/', {
     headers: { RSC: '1', 'Next-Router-Prefetch': '1' },
   });
@@ -399,6 +399,6 @@ test('completes local cancellation, registration, authentication, and sign-out w
     'post-sign-out unauthorized RSC response',
   );
   await isolated.close();
-  await page.screenshot({ path: '/tmp/babymonkey-production-public.png' });
+  await page.screenshot({ path: '/tmp/near-production-public.png' });
   await client.send('WebAuthn.removeVirtualAuthenticator', { authenticatorId });
 });

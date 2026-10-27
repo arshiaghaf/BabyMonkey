@@ -23,7 +23,7 @@ import (
 	"testing"
 	"time"
 
-	"example.com/babymonkey/relay/internal/protocol"
+	"github.com/arshiaghaf/near/relay/internal/protocol"
 )
 
 type syntheticPKI struct {
@@ -129,8 +129,8 @@ type workerHarnessDescriptor struct {
 // in a _test.go file makes synthetic behavior unreachable from production
 // binaries.
 func TestWorkerAdapterHarness(t *testing.T) {
-	descriptorPath := os.Getenv("BABYMONKEY_E2E_DESCRIPTOR")
-	mode := os.Getenv("BABYMONKEY_E2E_MODE")
+	descriptorPath := os.Getenv("NEAR_E2E_DESCRIPTOR")
+	mode := os.Getenv("NEAR_E2E_MODE")
 	if descriptorPath == "" {
 		t.Skip("cross-language harness not requested")
 	}

@@ -22,7 +22,7 @@ import (
 	"testing"
 	"time"
 
-	"example.com/babymonkey/relay/internal/protocol"
+	"github.com/arshiaghaf/near/relay/internal/protocol"
 )
 
 type fakeNotifier struct {

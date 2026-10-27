@@ -89,7 +89,7 @@ const server = createServer(async (request, response) => {
       `http://${hostname}:${port}`,
     );
 
-    if (process.env.BABYMONKEY_LOCAL_DEMO !== '1' && requestUrl.pathname.startsWith(artworkPrefix)) {
+    if (process.env.NEAR_LOCAL_DEMO !== '1' && requestUrl.pathname.startsWith(artworkPrefix)) {
       await serveProtectedPreviewAsset(request, response, requestUrl);
       return;
     }
@@ -118,11 +118,11 @@ async function close() {
 process.once('SIGINT', close);
 process.once('SIGTERM', close);
 try {
-  if (process.env.BABYMONKEY_LOCAL_DEMO === '1') {
+  if (process.env.NEAR_LOCAL_DEMO === '1') {
     if (port !== 3000 || hostname !== '127.0.0.1') throw new Error('Demo uses the exact local origin.');
     pendingSeed = createDemoSeed(projectRoot);
     seed = await pendingSeed;
-    process.env.BABYMONKEY_DEMO_STATE = seed.stateDir;
+    process.env.NEAR_DEMO_STATE = seed.stateDir;
   }
   app = createNextServer({ dev: true, dir: projectRoot, hostname, httpServer: server, port, turbopack: true });
   await app.prepare();

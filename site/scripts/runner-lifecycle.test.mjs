@@ -19,7 +19,7 @@ import { spawn } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import path from 'node:path';
-const state = process.env.BABYMONKEY_RUNTIME_SCRATCH ?? process.env.BABYMONKEY_DEMO_PARENT_STATE;
+const state = process.env.NEAR_RUNTIME_SCRATCH ?? process.env.NEAR_DEMO_PARENT_STATE;
 await mkdir(path.join(state,'synthetic-d1'));await writeFile(path.join(state,'synthetic-d1/sentinel'),'synthetic');
 await writeFile(path.join(state,'private-worker.json'),'synthetic config');await writeFile(path.join(state,'key.pem'),'synthetic certificate fixture');
 const descendant = spawn(process.execPath,['-e',"process.on('SIGTERM',()=>{});setInterval(()=>{},1000)"],{stdio:'ignore'});
@@ -91,7 +91,7 @@ test('both runners: real startup timeout cleans owned groups/state without an un
 
 test('owned directory validation rejects redirected and unrelated roots before mutation',async()=>{
   const unrelated=await mkdtemp(path.join(await realpath(os.tmpdir()),'runner-unrelated-'));
-  const owned=await ownedDirectory('babymonkey-demo-run-');
+  const owned=await ownedDirectory('near-demo-run-');
   const link=owned+'-link';
   try {
     await writeFile(path.join(unrelated,'sentinel'),'preserve');

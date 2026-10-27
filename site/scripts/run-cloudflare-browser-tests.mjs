@@ -7,11 +7,11 @@ const termination = terminationSignal();
 let state, runtime;
 let code = 0;
 try {
-  state = await ownedDirectory('babymonkey-production-runtime-');
+  state = await ownedDirectory('near-production-runtime-');
   termination.signal.throwIfAborted();
   runtime = fork(path.join(root,'scripts/production-browser-runtime.mjs'), process.argv.slice(2), {
     detached: true, cwd: root, stdio: ['ignore','inherit','inherit','ipc'],
-    env: { ...process.env, BABYMONKEY_RUNTIME_SCRATCH: state },
+    env: { ...process.env, NEAR_RUNTIME_SCRATCH: state },
   });
   // Register completion concurrently: a fast child may exit immediately after readiness.
   const completion = childResult(runtime, termination.signal, { timeoutMs: 300_000 });

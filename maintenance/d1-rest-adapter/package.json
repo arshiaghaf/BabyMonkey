@@ -1,5 +1,5 @@
 {
-  "name": "@babymonkey/d1-rest-adapter",
+  "name": "@near/d1-rest-adapter",
   "version": "0.1.0",
   "private": true,
   "type": "module",

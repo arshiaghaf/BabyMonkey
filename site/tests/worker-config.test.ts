@@ -14,8 +14,10 @@ describe('production Worker configuration gate', () => {
     expect(validProductionEnvironment({ ...complete(), BABYMONKEY_RELAY_ORIGIN: 'http://relay.owner-domain.net' })).toBe(false);
     expect(validProductionEnvironment({ ...complete(), BABYMONKEY_RP_ID: 'localhost', BABYMONKEY_ORIGIN: 'http://localhost:3000' })).toBe(false);
   });
-  it('cannot activate local fake delivery flags', () => {
+  it('cannot activate local fake delivery flags, including legacy names', () => {
     expect(validProductionEnvironment({ ...complete(), BABYMONKEY_LOCAL_DEMO: '1' })).toBe(false);
     expect(validProductionEnvironment({ ...complete(), BABYMONKEY_FAKE_DELIVERY: 'confirmed' })).toBe(false);
+    expect(validProductionEnvironment({ ...complete(), NEAR_LOCAL_DEMO: '1' })).toBe(false);
+    expect(validProductionEnvironment({ ...complete(), NEAR_FAKE_DELIVERY: 'confirmed' })).toBe(false);
   });
 });

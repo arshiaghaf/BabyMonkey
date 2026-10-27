@@ -9,12 +9,15 @@ type ProductionEnvironment = {
   BABYMONKEY_RELAY_MTLS?: { fetch?: unknown };
   BABYMONKEY_LOCAL_DEMO?: unknown;
   BABYMONKEY_FAKE_DELIVERY?: unknown;
+  NEAR_LOCAL_DEMO?: unknown;
+  NEAR_FAKE_DELIVERY?: unknown;
 };
 
 export function validProductionEnvironment(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false;
   const env = value as ProductionEnvironment;
   if (env.BABYMONKEY_LOCAL_DEMO !== undefined || env.BABYMONKEY_FAKE_DELIVERY !== undefined) return false;
+  if (env.NEAR_LOCAL_DEMO !== undefined || env.NEAR_FAKE_DELIVERY !== undefined) return false;
   if (!validConfiguredHostname(env.BABYMONKEY_RP_ID)
     || env.BABYMONKEY_ORIGIN !== `https://${env.BABYMONKEY_RP_ID}`
     || typeof env.DB?.prepare !== 'function'

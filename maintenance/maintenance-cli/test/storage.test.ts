@@ -13,7 +13,7 @@ import {
 const temporary: string[] = [];
 
 const tempDirectory = async (): Promise<string> => {
-  const directory = await mkdtemp(path.join(os.tmpdir(), 'babymonkey-maintenance-test-'));
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'near-maintenance-test-'));
   temporary.push(directory);
   await chmod(directory, 0o700);
   return directory;

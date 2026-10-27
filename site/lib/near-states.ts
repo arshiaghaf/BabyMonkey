@@ -1,4 +1,4 @@
-export const babyMonkeyStates = [
+export const nearStates = [
   'ready',
   'pending',
   'confirmed',
@@ -7,7 +7,7 @@ export const babyMonkeyStates = [
   'ambiguous',
 ] as const;
 
-export type BabyMonkeyState = (typeof babyMonkeyStates)[number];
+export type NearState = (typeof nearStates)[number];
 
 export type StatePresentation = {
   title: string;
@@ -20,7 +20,7 @@ export type StatePresentation = {
 
 const protectedArtworkPrefix = '/__preview-assets/monkey';
 
-export const statePresentations: Record<BabyMonkeyState, StatePresentation> = {
+export const statePresentations: Record<NearState, StatePresentation> = {
   ready: {
     title: 'No words needed. Send your little monkey.',
     titleLines: [

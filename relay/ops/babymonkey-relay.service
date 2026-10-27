@@ -1,5 +1,5 @@
 [Unit]
-Description=BabyMonkey fixed-notification relay
+Description=Near fixed-notification relay
 After=network-online.target
 Wants=network-online.target
 StartLimitIntervalSec=60

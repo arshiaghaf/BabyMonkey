@@ -88,9 +88,9 @@ function createSyntheticMTLSBinding(descriptor: HarnessDescriptor): Pick<Fetcher
 }
 
 async function runMode(mode: string) {
-  const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), 'babymonkey-relay-e2e-'));
+  const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), 'near-relay-e2e-'));
   const descriptorPath = path.join(temporaryDirectory, 'descriptor.json');
-  const goCache = process.env.BABYMONKEY_GO_CACHE
+  const goCache = process.env.NEAR_GO_CACHE
     ?? path.join(temporaryDirectory, 'go-cache');
   const child = spawn('go', [
     'test',
@@ -109,8 +109,8 @@ async function runMode(mode: string) {
       GOPROXY: 'off',
       GOSUMDB: 'off',
       GOTOOLCHAIN: 'local',
-      BABYMONKEY_E2E_DESCRIPTOR: descriptorPath,
-      BABYMONKEY_E2E_MODE: mode,
+      NEAR_E2E_DESCRIPTOR: descriptorPath,
+      NEAR_E2E_MODE: mode,
     },
     stdio: ['ignore', 'pipe', 'pipe'],
   });

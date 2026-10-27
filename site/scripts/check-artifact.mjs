@@ -11,7 +11,7 @@ async function filesBelow(dir) {
 const all = await filesBelow(artifact);
 const staticFiles = await filesBelow(path.join(artifact,'assets'));
 if (!(await filesBelow(client)).length) throw new Error('Missing client artifacts.');
-const forbiddenBuild = ['BABYMONKEY_LOCAL_DEMO', 'BABYMONKEY_FAKE_DELIVERY'];
+const forbiddenBuild = ['BABYMONKEY_LOCAL_DEMO', 'BABYMONKEY_FAKE_DELIVERY', 'NEAR_LOCAL_DEMO', 'NEAR_FAKE_DELIVERY'];
 const presentationSource = await readFile(path.join(root,'server/protected/presentation.ts'),'utf8');
 const presentationStart = presentationSource.indexOf('export const protectedPresentation =');
 const presentationEnd = presentationSource.indexOf('export function isProtectedAssetId');

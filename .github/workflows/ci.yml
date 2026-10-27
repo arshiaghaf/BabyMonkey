@@ -55,7 +55,7 @@ jobs:
       - name: Warm the relay harness build cache
         working-directory: relay
         run: |
-          echo "BABYMONKEY_GO_CACHE=$(go env GOCACHE)" >> "$GITHUB_ENV"
+          echo "NEAR_GO_CACHE=$(go env GOCACHE)" >> "$GITHUB_ENV"
           go test -run '^$' ./internal/relay
       - name: Synthetic Worker-to-relay mTLS tests
         run: npm run test:relay:local
@@ -179,4 +179,4 @@ jobs:
           python3 -B -m unittest discover -s relay/ops -p 'test_*.py'
       - name: Certificate renewal hook shell syntax
         if: ${{ !cancelled() }}
-        run: sh -n ops/babymonkey-certbot-deploy-hook
+        run: sh -n ops/near-certbot-deploy-hook

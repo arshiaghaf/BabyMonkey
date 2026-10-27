@@ -9,19 +9,19 @@ let code = 0;
 try {
   for (const outcome of ['confirmed', 'definitive-failure', 'ambiguous']) {
     termination.signal.throwIfAborted();
-    state = await ownedDirectory('babymonkey-demo-run-');
+    state = await ownedDirectory('near-demo-run-');
     termination.signal.throwIfAborted();
     try {
       server = fork(path.join(root, 'scripts/run-development-preview.mjs'), ['--hostname', '127.0.0.1'], {
         detached: true, cwd: root, stdio: ['ignore','inherit','inherit','ipc'],
-        env: { ...process.env, BABYMONKEY_DEMO_PARENT_STATE: state, BABYMONKEY_LOCAL_DEMO: '1', BABYMONKEY_FAKE_DELIVERY: outcome, NEXT_TELEMETRY_DISABLED: '1' },
+        env: { ...process.env, NEAR_DEMO_PARENT_STATE: state, NEAR_LOCAL_DEMO: '1', NEAR_FAKE_DELIVERY: outcome, NEXT_TELEMETRY_DISABLED: '1' },
       });
       const ready = await childResult(server, termination.signal, { ready: true });
       if (ready.tokens?.length !== 2) throw new Error('Invalid demo readiness.');
       termination.signal.throwIfAborted();
       test = spawn(process.execPath, [path.join(root,'node_modules/@playwright/test/cli.js'), 'test','--config','playwright.demo.config.ts'], {
         detached: true, cwd: root, stdio: 'inherit',
-        env: { ...process.env, BABYMONKEY_DEMO_INVITE_1: ready.tokens[0], BABYMONKEY_DEMO_INVITE_2: ready.tokens[1], BABYMONKEY_TEST_OUTCOME: outcome },
+        env: { ...process.env, NEAR_DEMO_INVITE_1: ready.tokens[0], NEAR_DEMO_INVITE_2: ready.tokens[1], NEAR_TEST_OUTCOME: outcome },
       });
       code = await childResult(test, termination.signal, { timeoutMs: 180_000 });
     } finally {

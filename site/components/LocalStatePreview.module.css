@@ -1,5 +1,5 @@
 .controls {
-  --babymonkey-local-preview-style: 1;
+  --near-local-preview-style: 1;
   position: fixed;
   z-index: 30;
   right: 12px;

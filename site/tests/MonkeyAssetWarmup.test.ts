@@ -2,11 +2,11 @@ import {
   shouldSkipMonkeyAssetWarmup,
   startMonkeyAssetWarmup,
 } from '@/lib/monkey-asset-warmup';
-import { babyMonkeyStates, statePresentations } from '@/lib/babymonkey-states';
+import { nearStates, statePresentations } from '@/lib/near-states';
 
 const artworkSources = Object.fromEntries(
-  babyMonkeyStates.map((state) => [state, statePresentations[state].imageSrc]),
-) as Record<(typeof babyMonkeyStates)[number], string>;
+  nearStates.map((state) => [state, statePresentations[state].imageSrc]),
+) as Record<(typeof nearStates)[number], string>;
 
 type FakeImage = {
   complete: boolean;

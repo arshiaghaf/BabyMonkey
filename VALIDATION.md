@@ -65,7 +65,7 @@ From the candidate root run `node scripts/source-snapshot.mjs`. It hashes sorted
 
 The direct-entry implementation snapshot passed the product checks listed above. This follow-up added two separate relay setup helpers; `python3 -m unittest discover -s relay/ops -p 'test_install_helpers.py'` passed twenty synthetic tests. They cover echo-disabled pseudoterminal input typed on prompt flush, echo restoration after prompt failure, fake Bot API data, private chat selection, atomic credentials, deny-all replacement precondition, TLS configuration, lineage and trust checks, unrelated-lineage exclusion, stopped/active installation, a start command that returns success while the service is inactive, successful old-pair rollback, failed rollback retaining marker and backups, both-backup preflight before stopping service, and interrupted first-install/renewal recovery. The tests use temporary files, generated synthetic certificates, and a stub service. They make no real Bot API request or systemd change. A synthetic client CA/leaf generated with the guide's illustrative OpenSSL commands passed `openssl verify -purpose sslclient`; this does not validate Cloudflare upload or hosted TLS. Provider documentation was reviewed, but no hosted command, real Bot API call, Certbot hook, migration, or deployment was executed.
 
-During this helper follow-up, `go test ./...` passed in `relay/`, `sh -n relay/ops/babymonkey-certbot-deploy-hook` passed, and all 21 shell examples in `docs/SETUP.md` parsed with `sh -n`. `npm run test:setup` passed all 21 tests with local loopback enabled. No Go or site runtime file changed after those runs. The restricted sandbox first blocked the suite's `127.0.0.1` listener with `EPERM`; the same suite then passed unchanged with loopback access. The other inherited product suites above were passed on the earlier direct-entry snapshot and were not rerun for these isolated setup-helper changes.
+During this helper follow-up, `go test ./...` passed in `relay/`, `sh -n relay/ops/near-certbot-deploy-hook` passed, and all 21 shell examples in `docs/SETUP.md` parsed with `sh -n`. `npm run test:setup` passed all 21 tests with local loopback enabled. No Go or site runtime file changed after those runs. The restricted sandbox first blocked the suite's `127.0.0.1` listener with `EPERM`; the same suite then passed unchanged with loopback access. The other inherited product suites above were passed on the earlier direct-entry snapshot and were not rerun for these isolated setup-helper changes.
 
 The guide now documents the attached-TTY credential installer and regular-file server TLS installer/deploy hook. Its first-install preflight precedes mutation; it specifies client-CA transfer, initial Certbot issuance, renewal scheduling checks, the remote-D1 migration return point, deny-all first start, exact-leaf opening, and deny-all/stop recovery. Both helpers and the sequence require owner review on the actual host, and unattended renewal has not been observed. Source and original artwork licensing have since been recorded under MIT in the release-preparation section below.
 
@@ -117,3 +117,37 @@ Fresh release checks passed: standard MIT body and attribution; exact single REA
 Existing dependency trees, uncertain prior-ownership `.wrangler` state and legacy shared browser-result directories were preserved. Older review copies, summaries and a screenshot whose deletion ownership was not established in this slice remain outside the export for lead judgment. Prior shared-output preservation uncertainty is unchanged. Durable private planning and audit evidence are retained intentionally.
 
 The candidate remains a separate local directory without Git initialization. The lead reviews the exact documentation diff and owns subsequent export staging and GitHub naming/publication. No repository rename/create/push, provider or production action occurred here. Hosted setup/live delivery/renewal, real Safari/iPhone and synchronized passkeys, Linux/Windows owner tooling, and the declared Node 22 minimum remain unverified. Use `node scripts/source-snapshot.mjs` for the exact new digest; this document is itself included.
+
+
+## Near rebrand validation — October 27, 2026
+
+The existing public repository was renamed to `arshiaghaf/near` with its repository
+identity retained. Source branding, packages, module imports, local tooling, and
+setup URLs use Near. [Compatibility identifiers](docs/BRANDING.md) remain unchanged;
+no deployment, credential rotation, or infrastructure mutation was performed.
+
+Local checks used Node 24.22.1 and verified Go 1.27.3:
+
+- Site lint/typecheck, 98 unit tests, 31 local D1 tests, 5 synthetic mTLS integration
+  tests, and all 34 setup/runner lifecycle tests passed. Lifecycle tests verified
+  normal, failure, interrupt, termination, and real startup-timeout cleanup.
+- Cloudflare build and packaged-artifact audit passed. All 3 production artifact
+  browser tests, 6 demo browser tests (confirmed, definitive failure, ambiguous),
+  and 25 development preview browser tests passed. These include virtual-passkey
+  enrollment/authentication, equal-user access, protected artwork, fake delivery,
+  keyboard/reduced-motion behavior, responsive layout, and the Near page title.
+- Maintenance CLI lint/types, 52 unit, 19 integration, and 11 attached-TTY tests,
+  leakage audit, and package build/dry-run passed. D1 adapter lint/types and all
+  24 tests passed.
+- Relay `go test -race -count=1 ./...`, `go vet ./...`, and `go build ./cmd/...`
+  passed, along with all 24 Python setup-helper tests and renewal-hook shell syntax.
+- Independent review findings were fixed: leakage assertions cover both legacy
+  and new identifiers. The final independent review was clean.
+
+The first demo browser attempt encountered port 3000 occupied by this run's
+concurrent lifecycle timeout fixture; it failed closed before readiness. After
+the lifecycle suite completed and cleaned up, all browser suites passed
+sequentially. Browser runners completed their owned process/state cleanup; no
+real notifications or hosted resources were used. Real-device and hosted behavior
+remain outside this local synthetic validation. GitHub checks and Codex approval
+are separate merge gates and are not implied by these local results.

@@ -180,7 +180,7 @@ test('renders all six states with one fixed monkey control and no external calls
   await page.goto('/');
   const pageOrigin = new URL(page.url()).origin;
   await expect.poll(() => finishedArtwork.size).toBe(artworkPaths.length);
-  await expect(page).toHaveTitle('Baby Monkey');
+  await expect(page).toHaveTitle('Near');
   await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
     'href',
     '/apple-touch-icon.png',

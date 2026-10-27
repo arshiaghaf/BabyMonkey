@@ -1,10 +1,10 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { expect } from '@playwright/test';
-import { statePresentations } from '../lib/babymonkey-states';
+import { statePresentations } from '../lib/near-states';
 
 const forbiddenDevelopmentStyleMarkers = [
-  '--babymonkey-local-preview-style',
+  '--near-local-preview-style',
   '.local-preview-controls',
   '.preview-state-buttons',
   '.show-preview-controls',
@@ -19,6 +19,7 @@ const forbiddenInfrastructureValueMarkers = [
   'TELEGRAM_BOT_TOKEN',
   'api.telegram.org',
   'babymonkey-production',
+  'near-production',
   'BABYMONKEY_RELAY_MTLS',
   'BABYMONKEY_RELAY_ORIGIN',
 ] as const;

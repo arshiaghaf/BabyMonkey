@@ -2,14 +2,14 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import type { BabyMonkeyState } from '@/lib/babymonkey-states';
+import type { NearState } from '@/lib/near-states';
 import styles from './MonkeyArtworkTransition.module.css';
 
 const ARTWORK_TRANSITION_DURATION_MS = 200;
 
 export type MonkeyArtworkTransitionProps = {
-  artworkSources: Readonly<Record<BabyMonkeyState, string>>;
-  state: BabyMonkeyState;
+  artworkSources: Readonly<Record<NearState, string>>;
+  state: NearState;
 };
 
 function MonkeyArtwork({
@@ -19,7 +19,7 @@ function MonkeyArtwork({
 }: {
   layer: 'current' | 'departing';
   source: string;
-  state: BabyMonkeyState;
+  state: NearState;
 }) {
   return (
     <Image
@@ -42,8 +42,8 @@ export function MonkeyArtworkTransition({
   state,
 }: MonkeyArtworkTransitionProps) {
   const [layers, setLayers] = useState<{
-    current: BabyMonkeyState;
-    departing: BabyMonkeyState | null;
+    current: NearState;
+    departing: NearState | null;
   }>({ current: state, departing: null });
 
   if (layers.current !== state) {

@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "babymonkey-oss-local",
+  "name": "near-oss-local",
   "main": "worker.ts",
   "alias": {
     "server-only": "./node_modules/server-only/empty.js"

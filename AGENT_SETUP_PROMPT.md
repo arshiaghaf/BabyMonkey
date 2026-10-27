@@ -1,17 +1,17 @@
-# Set up Baby Monkey with your agent
+# Set up Near with your agent
 
 Copy the entire text block below into a coding agent with web and terminal access. It can start without a checkout. You'll handle private credential entry and passkey prompts as the guide requires.
 
 ```text
-Help me set up Baby Monkey for exactly two people, starting with a safe local
+Help me set up Near for exactly two people, starting with a safe local
 demo and continuing through the hosted stages I authorize.
 
-Repository: https://github.com/arshiaghaf/BabyMonkey
+Repository: https://github.com/arshiaghaf/near
 Canonical prompt:
-https://github.com/arshiaghaf/BabyMonkey/blob/main/AGENT_SETUP_PROMPT.md
-Setup guide: https://github.com/arshiaghaf/BabyMonkey/blob/main/docs/SETUP.md
+https://github.com/arshiaghaf/near/blob/main/AGENT_SETUP_PROMPT.md
+Setup guide: https://github.com/arshiaghaf/near/blob/main/docs/SETUP.md
 Validation record:
-https://github.com/arshiaghaf/BabyMonkey/blob/main/VALIDATION.md
+https://github.com/arshiaghaf/near/blob/main/VALIDATION.md
 
 1. Find the source and prepare independently
 

@@ -1,4 +1,4 @@
-# Set up BabyMonkey
+# Set up Near
 
 This guide starts with a harmless local demo and then maps an owner-reviewed hosted installation. The hosted path is **a manual plan, not a completed validation of this skeleton**. The private credential and TLS helpers have synthetic local tests, but have not run on a VPS or with a real bot or certificate. Commands below assume a macOS owner computer, an Ubuntu VPS with `systemd`, and a checkout of this skeleton. Linux owner terminals may work, but the maintenance CLI's attached-TTY tests ran on macOS; its optional clipboard feature is macOS-only. Native Windows is unsupported by the CLI and local demo runners.
 
@@ -76,7 +76,7 @@ Expected: Wrangler reports the new D1 UUID and binding information. Insert the U
 
 The relay needs inbound TCP 443 for its own trusted TLS server certificate and TCP 80 for HTTP-01 certificate issuance and renewal. Retain SSH administration. Inspect current listeners and firewall rules first; do not overwrite rules for other services. The app's custom domain is on Cloudflare, while the relay's A/AAAA record points to the VPS **without Cloudflare proxying**. Confirm DNS before requesting the server certificate.
 
-On the Ubuntu VPS, after installing Go 1.25+ and Certbot and placing a clean source checkout at `/opt/babymonkey-src` (replace this path with the actual verified checkout), **inspect before the first mutation**. Confirm the proposed user, group, service name, and paths are unused; if any exists, stop and follow an owner-reviewed existing-installation procedure instead of running the first-install block. This read-only preflight must pass before `useradd`, `install -d`, symlink creation, or unit installation:
+On the Ubuntu VPS, after installing Go 1.25+ and Certbot and placing a clean source checkout at `/opt/near-src` (replace this path with the actual verified checkout), **inspect before the first mutation**. Confirm the proposed user, group, service name, and paths are unused; if any exists, stop and follow an owner-reviewed existing-installation procedure instead of running the first-install block. This read-only preflight must pass before `useradd`, `install -d`, symlink creation, or unit installation:
 
 ```sh
 sudo sh -c '
@@ -107,7 +107,7 @@ sudo useradd --system --user-group --home /var/lib/babymonkey-relay --shell /usr
 sudo install -d -o root -g root -m 755 /opt/babymonkey-relay/releases/v1
 sudo install -d -o root -g babymonkey-relay -m 750 /etc/babymonkey-relay /etc/babymonkey-relay/tls
 sudo install -d -o babymonkey-relay -g babymonkey-relay -m 700 /var/lib/babymonkey-relay
-cd /opt/babymonkey-src/relay
+cd /opt/near-src/relay
 go test ./...
 build_dir=$(mktemp -d)
 go build -o "$build_dir/babymonkey-relay" ./cmd/babymonkey-relay
@@ -145,9 +145,9 @@ Use a **private, owner-controlled CA and client certificate** for this Worker. K
 ```sh
 umask 077
 openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out client-ca.key
-openssl req -new -x509 -sha256 -days 3650 -key client-ca.key -out client-ca.pem -subj '/CN=BabyMonkey private client CA'
+openssl req -new -x509 -sha256 -days 3650 -key client-ca.key -out client-ca.pem -subj '/CN=Near private client CA'
 openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out client.key
-openssl req -new -key client.key -out client.csr -subj '/CN=BabyMonkey Worker client'
+openssl req -new -key client.key -out client.csr -subj '/CN=Near Worker client'
 printf 'basicConstraints=CA:FALSE\nkeyUsage=digitalSignature\nextendedKeyUsage=clientAuth\n' > client.ext
 openssl x509 -req -sha256 -days 365 -in client.csr -CA client-ca.pem -CAkey client-ca.key -CAcreateserial -extfile client.ext -out client.pem
 openssl verify -CAfile client-ca.pem -purpose sslclient client.pem
@@ -167,17 +167,17 @@ Expected: Cloudflare prints a **certificate ID**, not a private key. Put that ID
 
 ```sh
 openssl x509 -in /ABSOLUTE/PRIVATE/client-ca.pem -outform DER | openssl dgst -sha256
-ssh VPS_USER@VPS_HOST 'test ! -e "$HOME/babymonkey-client-ca.pem" && test ! -L "$HOME/babymonkey-client-ca.pem"'
-scp -p /ABSOLUTE/PRIVATE/client-ca.pem VPS_USER@VPS_HOST:babymonkey-client-ca.pem
+ssh VPS_USER@VPS_HOST 'test ! -e "$HOME/near-client-ca.pem" && test ! -L "$HOME/near-client-ca.pem"'
+scp -p /ABSOLUTE/PRIVATE/client-ca.pem VPS_USER@VPS_HOST:near-client-ca.pem
 ```
 
 On the VPS, compare the certificate's SHA-256 DER digest to the owner-computer result, then install it only if the destination is absent. Verify that the relay account can read it, and remove only the named transfer copy:
 
 ```sh
-openssl x509 -in "$HOME/babymonkey-client-ca.pem" -outform DER | openssl dgst -sha256
-sudo test ! -e /etc/babymonkey-relay/client-ca.pem && sudo test ! -L /etc/babymonkey-relay/client-ca.pem && sudo install -o babymonkey-relay -g babymonkey-relay -m 600 "$HOME/babymonkey-client-ca.pem" /etc/babymonkey-relay/client-ca.pem
+openssl x509 -in "$HOME/near-client-ca.pem" -outform DER | openssl dgst -sha256
+sudo test ! -e /etc/babymonkey-relay/client-ca.pem && sudo test ! -L /etc/babymonkey-relay/client-ca.pem && sudo install -o babymonkey-relay -g babymonkey-relay -m 600 "$HOME/near-client-ca.pem" /etc/babymonkey-relay/client-ca.pem
 sudo -u babymonkey-relay openssl x509 -in /etc/babymonkey-relay/client-ca.pem -noout -subject
-rm "$HOME/babymonkey-client-ca.pem"
+rm "$HOME/near-client-ca.pem"
 ```
 
 If either digest differs or either destination already exists, stop and inspect; do not overwrite it. On an existing installation, plan certificate overlap before replacing the active CA.
@@ -194,7 +194,7 @@ Certbot's [standalone authenticator](https://eff-certbot.readthedocs.io/en/stabl
 Copy the nonsecret `relay/config/tls-install.example.json` to `/etc/babymonkey-relay/tls-install.json` as **root-owned mode 600**, and privately edit its `hostname` and `lineage` to the exact DNS-only relay hostname and `/etc/letsencrypt/live/<same-hostname>`. Confirm the client CA, credentials, deny-all allowlist, and replay files exist so the relay's complete `-check` can pass. The directory `/etc/babymonkey-relay/tls` must be root-owned, group `babymonkey-relay`, mode 750; the installed cert and key become relay-owned mode 600. Review and then run:
 
 ```sh
-sudo test ! -e /etc/babymonkey-relay/tls-install.json && sudo test ! -L /etc/babymonkey-relay/tls-install.json && sudo install -o root -g root -m 600 /opt/babymonkey-src/relay/config/tls-install.example.json /etc/babymonkey-relay/tls-install.json
+sudo test ! -e /etc/babymonkey-relay/tls-install.json && sudo test ! -L /etc/babymonkey-relay/tls-install.json && sudo install -o root -g root -m 600 /opt/near-src/relay/config/tls-install.example.json /etc/babymonkey-relay/tls-install.json
 sudoedit /etc/babymonkey-relay/tls-install.json
 sudo /usr/bin/python3 /opt/babymonkey-relay/current/install_tls.py --install
 sudo -u babymonkey-relay /opt/babymonkey-relay/current/babymonkey-relay -config /etc/babymonkey-relay/relay.json -check
@@ -205,7 +205,7 @@ The installer accepts only the configured Certbot lineage, resolves its `live/` 
 After reviewing the VPS's Certbot renewal configuration and scheduler, install the repository's deploy hook as a root-owned executable:
 
 ```sh
-sudo test ! -e /etc/letsencrypt/renewal-hooks/deploy/babymonkey-relay-tls && sudo test ! -L /etc/letsencrypt/renewal-hooks/deploy/babymonkey-relay-tls && sudo install -o root -g root -m 755 /opt/babymonkey-src/relay/ops/babymonkey-certbot-deploy-hook /etc/letsencrypt/renewal-hooks/deploy/babymonkey-relay-tls
+sudo test ! -e /etc/letsencrypt/renewal-hooks/deploy/babymonkey-relay-tls && sudo test ! -L /etc/letsencrypt/renewal-hooks/deploy/babymonkey-relay-tls && sudo install -o root -g root -m 755 /opt/near-src/relay/ops/near-certbot-deploy-hook /etc/letsencrypt/renewal-hooks/deploy/babymonkey-relay-tls
 sudo certbot renew --dry-run --run-deploy-hooks --cert-name relay.your-domain.tld
 ```
 
