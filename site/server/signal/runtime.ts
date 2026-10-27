@@ -22,8 +22,8 @@ const readEnvironment = (): SignalCloudflareEnv | null => {
 };
 
 export function getFixedDeliveryBoundary(): FixedDeliveryBoundary {
-  if (process.env.NODE_ENV === 'development' && process.env.BABYMONKEY_LOCAL_DEMO === '1') {
-    const outcome = process.env.BABYMONKEY_FAKE_DELIVERY;
+  if (process.env.NODE_ENV === 'development' && process.env.NEAR_LOCAL_DEMO === '1') {
+    const outcome = process.env.NEAR_FAKE_DELIVERY;
     if (outcome === 'confirmed' || outcome === 'definitive-failure' || outcome === 'ambiguous') {
       return { async deliver() { return outcome; } };
     }

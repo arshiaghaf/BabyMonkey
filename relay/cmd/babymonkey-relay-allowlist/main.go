@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"example.com/babymonkey/relay/internal/relay"
+	"github.com/arshiaghaf/near/relay/internal/relay"
 )
 
 const productionAllowlist = "/etc/babymonkey-relay/allowlist.json"

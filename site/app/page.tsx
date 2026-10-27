@@ -9,7 +9,7 @@ export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
 export default async function Home() {
-  if (process.env.NODE_ENV === 'development' && process.env.BABYMONKEY_LOCAL_DEMO !== '1') {
+  if (process.env.NODE_ENV === 'development' && process.env.NEAR_LOCAL_DEMO !== '1') {
     const { LocalStatePreview } = await import('@/components/LocalStatePreview');
     return <LocalStatePreview />;
   }

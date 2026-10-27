@@ -61,7 +61,7 @@ ${clientSource}`).not.toMatch(/createInvitation|setNotificationState|maintenance
     expect(signalRuntimeSource).not.toMatch(/globalThis\.fetch/i);
     expect(workerConfig).not.toContain('BABYMONKEY_RELAY_ORIGIN');
     expect(`${routeSource}\n${clientSource}`).not.toMatch(
-      /BABYMONKEY_RELAY|edge\.owner\.co|certificate_id|mtls_certificates/i,
+      /BABYMONKEY_RELAY|NEAR_RELAY|edge\.owner\.co|certificate_id|mtls_certificates/i,
     );
     expect(workerConfig).not.toMatch(
       /TELEGRAM|CLOUDFLARE_(?:API_KEY|API_TOKEN)|BEGIN (?:CERTIFICATE|PRIVATE KEY)|secrets_store/i,

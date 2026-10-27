@@ -1,4 +1,4 @@
-import type { BabyMonkeyState } from '@/lib/babymonkey-states';
+import type { NearState } from '@/lib/near-states';
 
 const criticalStates = ['ready', 'pending'] as const;
 const secondaryStates = [
@@ -27,7 +27,7 @@ export type MonkeyAssetWarmupSession = {
 };
 
 export type StartMonkeyAssetWarmupOptions = {
-  artworkSources: Readonly<Record<BabyMonkeyState, string>>;
+  artworkSources: Readonly<Record<NearState, string>>;
   createImage?: () => HTMLImageElement;
 };
 
@@ -84,7 +84,7 @@ export function startMonkeyAssetWarmup({
   });
   const resources: WarmupResource[] = [];
 
-  const begin = (state: BabyMonkeyState, priority: WarmupPriority) => {
+  const begin = (state: NearState, priority: WarmupPriority) => {
     const resource = beginImageWarmup(artworkSources[state], priority, createImage);
     resources.push(resource);
     return resource;

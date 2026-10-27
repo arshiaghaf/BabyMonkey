@@ -6,12 +6,12 @@ import {
   AuthorizedIdentityPresentation,
   type AuthorizedIdentityPresentationProps,
 } from '@/components/AuthorizedIdentityPresentation';
-import { babyMonkeyStates, statePresentations } from '@/lib/babymonkey-states';
+import { nearStates, statePresentations } from '@/lib/near-states';
 import { confirmedDisplayDurationMs } from '@/lib/presentation-timing';
 import { signalCooldownMs } from '@/lib/signal-timing';
 
 const artworkSources = Object.fromEntries(
-  babyMonkeyStates.map((state) => [state, statePresentations[state].imageSrc]),
+  nearStates.map((state) => [state, statePresentations[state].imageSrc]),
 ) as AuthorizedIdentityPresentationProps['artworkSources'];
 
 const baseProps = {

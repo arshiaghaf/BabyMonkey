@@ -20,9 +20,9 @@ const messages: Record<MaintenanceErrorCode, string> = {
   'configuration-permissions': 'The local maintenance file permissions are unsafe.',
   'contradictory-state': 'Authoritative state is contradictory; this action is blocked.',
   'invitation-unavailable': 'An invitation cannot be created for that slot now.',
-  'lock-held': 'Another local BabyMonkey maintenance session is active.',
+  'lock-held': 'Another local Near maintenance session is active.',
   'mutation-not-confirmed': 'The requested change was not confirmed; it was not retried.',
-  noninteractive: 'BabyMonkey maintenance requires one attached interactive TTY.',
+  noninteractive: 'Near maintenance requires one attached interactive TTY.',
   'secret-input-failed': 'The Cloudflare token was not accepted from the attached TTY.',
   'sensitive-input-rejected': 'Sensitive argv or environment input is not accepted.',
   'session-timeout': 'The bounded maintenance session timed out.',
@@ -42,5 +42,5 @@ export class MaintenanceError extends Error {
 export const publicErrorMessage = (error: unknown): string => (
   error instanceof MaintenanceError
     ? error.message
-    : 'BabyMonkey maintenance stopped safely after an unexpected local error.'
+    : 'Near maintenance stopped safely after an unexpected local error.'
 );

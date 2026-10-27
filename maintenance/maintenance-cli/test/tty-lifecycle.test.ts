@@ -40,7 +40,7 @@ const activeChildren = new Set<ChildProcessWithoutNullStreams>();
 const activeDirectories = new Set<string>();
 
 beforeAll(async () => {
-  fixtureBuildDirectory = await mkdtemp(path.join(os.tmpdir(), 'babymonkey-tty-build-'));
+  fixtureBuildDirectory = await mkdtemp(path.join(os.tmpdir(), 'near-tty-build-'));
   await chmod(fixtureBuildDirectory, 0o700);
   fixture = path.join(fixtureBuildDirectory, 'tty-lifecycle.mjs');
   await build({
@@ -87,7 +87,7 @@ const createSession = async (scenario: Scenario = {}): Promise<PtySession> => {
   if (process.platform !== 'darwin') {
     throw new Error('The maintenance CLI PTY suite requires its supported macOS runtime.');
   }
-  const directory = await mkdtemp(path.join(os.tmpdir(), 'babymonkey-tty-'));
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'near-tty-'));
   activeDirectories.add(directory);
   await chmod(directory, 0o700);
   await writeFile(path.join(directory, 'scenario.json'), JSON.stringify({

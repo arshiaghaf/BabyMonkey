@@ -12,7 +12,7 @@ import (
 	"syscall"
 	"time"
 
-	"example.com/babymonkey/relay/internal/relay"
+	"github.com/arshiaghaf/near/relay/internal/relay"
 )
 
 func main() {

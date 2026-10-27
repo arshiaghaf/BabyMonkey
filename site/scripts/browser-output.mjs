@@ -8,7 +8,7 @@ import path from 'node:path';
 // No environment variable or caller-supplied deletion path is accepted.
 export function ownedBrowserOutput(mode) {
   if (!['preview', 'demo', 'production'].includes(mode)) throw new Error('Unknown browser output mode.');
-  const root = mkdtempSync(path.join(realpathSync(os.tmpdir()), `babymonkey-browser-${mode}-`));
+  const root = mkdtempSync(path.join(realpathSync(os.tmpdir()), `near-browser-${mode}-`));
   const { dev, ino } = lstatSync(root);
   let interruptedExitCode;
   const cleanup = () => {

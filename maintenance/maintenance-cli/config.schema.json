@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "BabyMonkey local maintenance CLI configuration",
+  "title": "Near local maintenance CLI configuration",
   "type": "object",
   "additionalProperties": false,
   "required": [

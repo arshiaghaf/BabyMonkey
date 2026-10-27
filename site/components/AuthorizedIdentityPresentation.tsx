@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { BabyMonkeyExperience } from '@/components/BabyMonkeyExperience';
+import { NearExperience } from '@/components/NearExperience';
 import { MonkeyAssetWarmup } from '@/components/MonkeyAssetWarmup';
 import { PublicAuthShell } from '@/components/PublicAuthShell';
-import type { BabyMonkeyState, StatePresentation } from '@/lib/babymonkey-states';
+import type { NearState, StatePresentation } from '@/lib/near-states';
 import { confirmedDisplayDurationMs } from '@/lib/presentation-timing';
 import { signalCooldownMs } from '@/lib/signal-timing';
 
@@ -15,8 +15,8 @@ export interface AuthorizedIdentityPresentationProps {
     primaryAction: string;
     revealResult: string;
   };
-  artworkSources: Readonly<Record<BabyMonkeyState, string>>;
-  presentations: Readonly<Record<BabyMonkeyState, StatePresentation>>;
+  artworkSources: Readonly<Record<NearState, string>>;
+  presentations: Readonly<Record<NearState, StatePresentation>>;
   initialInteraction:
     | { available: false }
     | {
@@ -98,14 +98,14 @@ export function AuthorizedIdentityPresentation({
       || initialInteraction.state === 'ambiguous')
     ? toTerminalState(initialInteraction.state)
     : null;
-  const initialViewState: BabyMonkeyState = initialTerminal
+  const initialViewState: NearState = initialTerminal
     ? 'pending'
     : !initialInteraction.available
       ? 'ready'
       : initialInteraction.state === 'definitive-failure'
         ? 'definitiveFailure'
         : initialInteraction.state;
-  const [interactionState, setInteractionState] = useState<BabyMonkeyState>(
+  const [interactionState, setInteractionState] = useState<NearState>(
     initialViewState,
   );
   const [pendingResult, setPendingResult] = useState<TerminalState | null>(initialTerminal);
@@ -306,7 +306,7 @@ export function AuthorizedIdentityPresentation({
   return (
     <>
       <MonkeyAssetWarmup artworkSources={artworkSources} />
-      <BabyMonkeyExperience
+      <NearExperience
         artworkSources={artworkSources}
         brandImageSrc={brandImageSrc}
         labels={{

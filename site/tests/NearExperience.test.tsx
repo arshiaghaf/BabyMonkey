@@ -1,26 +1,26 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
-  BabyMonkeyExperience,
-  type BabyMonkeyExperienceProps,
-} from '@/components/BabyMonkeyExperience';
-import { babyMonkeyStates, statePresentations } from '@/lib/babymonkey-states';
+  NearExperience,
+  type NearExperienceProps,
+} from '@/components/NearExperience';
+import { nearStates, statePresentations } from '@/lib/near-states';
 
 const artworkSources = Object.fromEntries(
-  babyMonkeyStates.map((state) => [state, statePresentations[state].imageSrc]),
-) as Record<(typeof babyMonkeyStates)[number], string>;
+  nearStates.map((state) => [state, statePresentations[state].imageSrc]),
+) as Record<(typeof nearStates)[number], string>;
 const labels = {
   primaryAction: 'Ask the recipient to reach out gently',
   revealResult: 'Reveal whether the little monkey was sent',
   signOut: 'Sign out',
 };
 type TestExperienceProps = Omit<
-  BabyMonkeyExperienceProps,
+  NearExperienceProps,
   'artworkSources' | 'brandImageSrc' | 'labels' | 'presentation'
 >;
 function TestExperience(props: TestExperienceProps) {
   return (
-    <BabyMonkeyExperience
+    <NearExperience
       {...props}
       artworkSources={artworkSources}
       brandImageSrc="/__preview-assets/monkey/ready-monkey-head.png"
@@ -30,7 +30,7 @@ function TestExperience(props: TestExperienceProps) {
   );
 }
 
-describe('BabyMonkeyExperience', () => {
+describe('NearExperience', () => {
   afterEach(() => {
     vi.useRealTimers();
   });

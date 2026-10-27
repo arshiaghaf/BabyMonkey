@@ -29,9 +29,9 @@ test('verification stays unavailable until the authentication handler is hydrate
   }
 });
 test('two synthetic users enroll independently and the fixed signal uses fake local delivery', async ({ browser }) => {
-  const expectedResult = process.env.BABYMONKEY_TEST_OUTCOME === 'ambiguous' ? 'Your little monkey may already be on its way.' : process.env.BABYMONKEY_TEST_OUTCOME === 'definitive-failure' ? 'Nothing was sent yet.' : 'Your little monkey was sent.';
-  const firstToken = process.env.BABYMONKEY_DEMO_INVITE_1;
-  const secondToken = process.env.BABYMONKEY_DEMO_INVITE_2;
+  const expectedResult = process.env.NEAR_TEST_OUTCOME === 'ambiguous' ? 'Your little monkey may already be on its way.' : process.env.NEAR_TEST_OUTCOME === 'definitive-failure' ? 'Nothing was sent yet.' : 'Your little monkey was sent.';
+  const firstToken = process.env.NEAR_DEMO_INVITE_1;
+  const secondToken = process.env.NEAR_DEMO_INVITE_2;
   expect(firstToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
   expect(secondToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
   const first = await makeVirtualUser(browser);

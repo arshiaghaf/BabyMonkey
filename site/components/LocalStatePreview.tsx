@@ -1,20 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { BabyMonkeyExperience } from '@/components/BabyMonkeyExperience';
+import { NearExperience } from '@/components/NearExperience';
 import { MonkeyAssetWarmup } from '@/components/MonkeyAssetWarmup';
 import {
   PublicAuthShell,
   type PublicAuthShellState,
 } from '@/components/PublicAuthShell';
 import {
-  babyMonkeyStates,
+  nearStates,
   statePresentations,
-  type BabyMonkeyState,
-} from '@/lib/babymonkey-states';
+  type NearState,
+} from '@/lib/near-states';
 import styles from './LocalStatePreview.module.css';
 
-const stateLabels: Record<BabyMonkeyState, string> = {
+const stateLabels: Record<NearState, string> = {
   ready: 'Ready',
   pending: 'Pending',
   confirmed: 'Confirmed',
@@ -24,8 +24,8 @@ const stateLabels: Record<BabyMonkeyState, string> = {
 };
 
 const artworkSources = Object.fromEntries(
-  babyMonkeyStates.map((state) => [state, statePresentations[state].imageSrc]),
-) as Record<BabyMonkeyState, string>;
+  nearStates.map((state) => [state, statePresentations[state].imageSrc]),
+) as Record<NearState, string>;
 const brandImageSrc = '/__preview-assets/monkey/ready-monkey-head.png';
 const experienceLabels = {
   primaryAction: 'Ask the recipient to reach out gently',
@@ -33,13 +33,13 @@ const experienceLabels = {
   signOut: 'Sign out',
 };
 export function LocalStatePreview() {
-  const [state, setState] = useState<BabyMonkeyState>('ready');
+  const [state, setState] = useState<NearState>('ready');
   const [controlsVisible, setControlsVisible] = useState(true);
   const [authState, setAuthState] = useState<PublicAuthShellState | null>(null);
 
   const enterPending = () => setState('pending');
   const revealResult = () => setState('confirmed');
-  const showState = (nextState: BabyMonkeyState) => {
+  const showState = (nextState: NearState) => {
     setAuthState(null);
     setState(nextState);
   };
@@ -58,7 +58,7 @@ export function LocalStatePreview() {
           state={authState}
         />
       ) : (
-        <BabyMonkeyExperience
+        <NearExperience
           artworkSources={artworkSources}
           brandImageSrc={brandImageSrc}
           labels={experienceLabels}
@@ -83,7 +83,7 @@ export function LocalStatePreview() {
             className={styles.stateButtons}
             role="group"
           >
-            {babyMonkeyStates.map((candidateState) => (
+            {nearStates.map((candidateState) => (
               <button
                 aria-pressed={
                   !authState && state === candidateState

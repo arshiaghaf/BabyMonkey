@@ -79,7 +79,7 @@ site/app/layout.tsx
 site/app/media/[assetId]/route.ts
 site/app/page.tsx
 site/components/AuthorizedIdentityPresentation.tsx
-site/components/BabyMonkeyExperience.tsx
+site/components/NearExperience.tsx
 site/components/IdentityGateway.tsx
 site/components/LocalStatePreview.module.css
 site/components/LocalStatePreview.tsx
@@ -125,7 +125,7 @@ site/e2e/cloudflare-runtime.spec.ts
 site/e2e/local-preview.spec.ts
 site/e2e/production-artifact-assertions.ts
 site/eslint.config.mjs
-site/lib/babymonkey-states.ts
+site/lib/near-states.ts
 site/lib/monkey-asset-warmup.ts
 site/lib/presentation-timing.ts
 site/lib/signal-timing.ts
@@ -172,7 +172,7 @@ site/server/signal/mtls-delivery-boundary.ts
 site/server/signal/runtime.ts
 site/server/signal/service.ts
 site/tests/AuthorizedIdentityPresentation.test.tsx
-site/tests/BabyMonkeyExperience.test.tsx
+site/tests/NearExperience.test.tsx
 site/tests/LocalStatePreview.test.tsx
 site/tests/MonkeyAssetWarmup.test.ts
 site/tests/PublicAuthShell.test.tsx

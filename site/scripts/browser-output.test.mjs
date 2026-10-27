@@ -40,7 +40,7 @@ for (const config of ['playwright.config.ts', 'playwright.demo.config.ts', 'play
         `);
         child = spawn(process.execPath, [path.resolve('node_modules/@playwright/test/cli.js'), 'test', '--config', path.join(scratch, 'config.ts')], {
           cwd: process.cwd(), detached: true, stdio: ['ignore', 'pipe', 'pipe'],
-          env: { ...process.env, BABYMONKEY_TEST_PROXY: 'http://127.0.0.1:9', BABYMONKEY_BROWSER_OUTPUT: scratch },
+          env: { ...process.env, NEAR_TEST_PROXY: 'http://127.0.0.1:9', NEAR_BROWSER_OUTPUT: scratch },
         });
         let output = '', resolveReady;
         const ready = new Promise(resolve => { resolveReady = resolve; });
@@ -55,7 +55,7 @@ for (const config of ['playwright.config.ts', 'playwright.demo.config.ts', 'play
         assert.ok(outputs.size >= 1, output);
         for (const directory of outputs) {
           assert.notEqual(path.dirname(directory), scratch);
-          assert.match(path.basename(path.dirname(directory)), /^babymonkey-browser-(preview|demo|production)-/);
+          assert.match(path.basename(path.dirname(directory)), /^near-browser-(preview|demo|production)-/);
         }
         if (signal) child.kill(signal);
         const result = await bounded(completion, 10_000, 'Browser output cleanup exceeded its bound.');

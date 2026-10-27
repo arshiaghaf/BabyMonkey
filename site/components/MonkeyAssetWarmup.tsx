@@ -5,12 +5,12 @@ import {
   shouldSkipMonkeyAssetWarmup,
   startMonkeyAssetWarmup,
 } from '@/lib/monkey-asset-warmup';
-import type { BabyMonkeyState } from '@/lib/babymonkey-states';
+import type { NearState } from '@/lib/near-states';
 
 export function MonkeyAssetWarmup({
   artworkSources,
 }: {
-  artworkSources: Readonly<Record<BabyMonkeyState, string>>;
+  artworkSources: Readonly<Record<NearState, string>>;
 }) {
   useEffect(() => {
     if (shouldSkipMonkeyAssetWarmup()) return;

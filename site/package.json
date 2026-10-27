@@ -1,5 +1,5 @@
 {
-  "name": "babymonkey-ui-preview",
+  "name": "near-ui-preview",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -20,11 +20,11 @@
     "test:browser:development": "playwright test --config playwright.config.ts",
     "test:watch": "vitest",
     "check": "npm run lint && npm run typecheck && npm run test && npm run test:d1 && npm run test:relay:local && npm run test:setup",
-    "demo": "BABYMONKEY_LOCAL_DEMO=1 BABYMONKEY_FAKE_DELIVERY=confirmed NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
+    "demo": "NEAR_LOCAL_DEMO=1 NEAR_FAKE_DELIVERY=confirmed NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
     "setup:check": "node scripts/setup-check.mjs",
     "test:browser:demo": "node scripts/run-demo-browser-tests.mjs",
-    "demo:failure": "BABYMONKEY_LOCAL_DEMO=1 BABYMONKEY_FAKE_DELIVERY=definitive-failure NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
-    "demo:ambiguous": "BABYMONKEY_LOCAL_DEMO=1 BABYMONKEY_FAKE_DELIVERY=ambiguous NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
+    "demo:failure": "NEAR_LOCAL_DEMO=1 NEAR_FAKE_DELIVERY=definitive-failure NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
+    "demo:ambiguous": "NEAR_LOCAL_DEMO=1 NEAR_FAKE_DELIVERY=ambiguous NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
     "artifact:check": "node scripts/check-artifact.mjs",
     "test:setup": "node --test --test-concurrency=1 scripts/setup-check.test.mjs scripts/demo-safety.test.mjs scripts/runner-lifecycle.test.mjs scripts/browser-output.test.mjs scripts/inline-preview-props.test.mjs",
     "test:browser:production": "node scripts/run-cloudflare-browser-tests.mjs"

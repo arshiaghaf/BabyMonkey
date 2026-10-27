@@ -4,12 +4,12 @@ import './ProtectedExperience.css';
 import { MonkeyMark } from '@/components/MonkeyMark';
 import { MonkeyArtworkTransition } from '@/components/MonkeyArtworkTransition';
 import type {
-  BabyMonkeyState,
+  NearState,
   StatePresentation,
-} from '@/lib/babymonkey-states';
+} from '@/lib/near-states';
 
-export type BabyMonkeyExperienceProps = {
-  artworkSources: Readonly<Record<BabyMonkeyState, string>>;
+export type NearExperienceProps = {
+  artworkSources: Readonly<Record<NearState, string>>;
   brandImageSrc: string;
   labels: {
     primaryAction: string;
@@ -17,7 +17,7 @@ export type BabyMonkeyExperienceProps = {
     signOut: string;
   };
   presentation: StatePresentation;
-  state: BabyMonkeyState;
+  state: NearState;
   onSignal?: () => void;
   onRevealResult?: () => void;
   onRetry?: () => void;
@@ -25,7 +25,7 @@ export type BabyMonkeyExperienceProps = {
   onSignOut?: () => void;
 };
 
-export function BabyMonkeyExperience({
+export function NearExperience({
   artworkSources,
   brandImageSrc,
   labels,
@@ -36,7 +36,7 @@ export function BabyMonkeyExperience({
   onRetry,
   onRetryAmbiguous,
   onSignOut,
-}: BabyMonkeyExperienceProps) {
+}: NearExperienceProps) {
   const primaryAction =
     state === 'ready'
       ? onSignal

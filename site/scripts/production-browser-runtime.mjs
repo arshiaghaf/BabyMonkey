@@ -12,7 +12,7 @@ import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { checkSetup } from './setup-check.mjs';
 import { validateOwnedDirectory } from './runner-lifecycle.mjs';
 const root=process.cwd();
-const scratch=process.env.BABYMONKEY_RUNTIME_SCRATCH;
+const scratch=process.env.NEAR_RUNTIME_SCRATCH;
 await validateOwnedDirectory(scratch);
 const origin='https://app.owner-domain.net';
 let mf,tls,proxy,test;
@@ -39,7 +39,7 @@ try {
   await db.prepare(`INSERT INTO invitations (invitation_id,token_hash,principal_slot,purpose,required_generation,created_at_ms,expires_at_ms) VALUES ('synthetic-browser-invite',?,1,'initial',NULL,?,?)`).bind(hash,now,now+3600000).run();
   // Fake external transport is a harness binding, never application code or a production flag.
   await db.prepare('UPDATE notification_control SET enabled=1,revision=2,updated_at_ms=? WHERE singleton=1').bind(now).run();
-  for(const flags of [{BABYMONKEY_LOCAL_DEMO:'1'},{BABYMONKEY_FAKE_DELIVERY:'confirmed'},{BABYMONKEY_RP_ID:'localhost',BABYMONKEY_ORIGIN:'http://localhost:3000'}]) {
+  for(const flags of [{NEAR_LOCAL_DEMO:'1'},{NEAR_FAKE_DELIVERY:'confirmed'},{BABYMONKEY_RP_ID:'localhost',BABYMONKEY_ORIGIN:'http://localhost:3000'}]) {
     const rejected=new Miniflare(convertV4MiniflareOptions({cf:false,telemetry:{enabled:false},resourceTmpPath:path.join(scratch,'rejected-runtime-'+Object.keys(flags)[0]),workers:[{...appOptions,bindings:{...config.vars,...flags}},...auxiliary]}));
     try {const response=await (await rejected.getWorker('application')).fetch(origin); const body=await response.text();if(response.status!==404)console.error(body);assert.equal(response.status,404);} finally {await rejected.dispose();}
   }
@@ -66,7 +66,7 @@ try {
   proxy=createHTTPServer((_req,res)=>{res.writeHead(403);res.end();});const sockets=new Set();
   proxy.on('connect',(req,socket,head)=>{if(req.url!=='app.owner-domain.net:443'){socket.end('HTTP/1.1 403 Forbidden\r\n\r\n');return;}const upstream=connect(tlsPort,'127.0.0.1',()=>{if(socket.destroyed){upstream.destroy();return;}socket.write('HTTP/1.1 200 Connection Established\r\n\r\n');upstream.write(head);socket.pipe(upstream);upstream.pipe(socket);});sockets.add(socket);sockets.add(upstream);socket.on('close',()=>{sockets.delete(socket);upstream.destroy();});socket.on('error',()=>upstream.destroy());upstream.on('close',()=>sockets.delete(upstream));upstream.on('error',()=>socket.destroy());});const proxyPort=await listen(proxy);
   process.send?.({ready:true});
-  test=spawn(process.execPath,[path.join(root,'node_modules/@playwright/test/cli.js'),'test','--config','playwright.cloudflare.config.ts',...process.argv.slice(2)],{cwd:root,stdio:'inherit',env:{...process.env,BABYMONKEY_TEST_PROXY:`http://127.0.0.1:${proxyPort}`,BABYMONKEY_TEST_INVITATION:token,BABYMONKEY_TEST_ORIGIN:origin}});
+  test=spawn(process.execPath,[path.join(root,'node_modules/@playwright/test/cli.js'),'test','--config','playwright.cloudflare.config.ts',...process.argv.slice(2)],{cwd:root,stdio:'inherit',env:{...process.env,NEAR_TEST_PROXY:`http://127.0.0.1:${proxyPort}`,NEAR_TEST_INVITATION:token,NEAR_TEST_ORIGIN:origin}});
   process.exitCode=await new Promise(resolve=>test.once('exit',code=>resolve(code??1)));
   for(const socket of sockets)socket.destroy();
 } finally {

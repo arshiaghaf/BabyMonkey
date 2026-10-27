@@ -2,7 +2,7 @@
   <img src="site/protected-assets/monkey/ready-monkey.png" width="240" alt="A smiling baby monkey sitting inside a pink storybook badge">
 </p>
 
-# Baby Monkey
+# Near
 
 A little pink way to ask someone to reach out. **Exactly two equal users, one monkey button, and one fixed Telegram signal sent only after a deliberate tap.**
 
@@ -11,9 +11,9 @@ A little pink way to ask someone to reach out. **Exactly two equal users, one mo
 Paste this into a coding agent that can browse the web and work in a terminal. **You don't need to clone the repository first.**
 
 ```text
-Help me set up Baby Monkey from https://github.com/arshiaghaf/BabyMonkey.
+Help me set up Near from https://github.com/arshiaghaf/near.
 Read the full copyable setup prompt at
-https://github.com/arshiaghaf/BabyMonkey/blob/main/AGENT_SETUP_PROMPT.md
+https://github.com/arshiaghaf/near/blob/main/AGENT_SETUP_PROMPT.md
 and follow it using the actual repository instructions and docs/SETUP.md.
 Start by finding a suitable checkout or cloning safely, then run and verify
 the provider-free local demo and its cleanup. Guide me through hosted setup
@@ -25,9 +25,9 @@ Your agent can inspect prerequisites, prepare private configuration, run local c
 
 [Copy the full agent prompt](AGENT_SETUP_PROMPT.md) · [Follow the manual setup guide](docs/SETUP.md) · [Read the validation record](VALIDATION.md)
 
-## How Baby Monkey works
+## How Near works
 
-I originally built Baby Monkey for someone I care about, to make reaching out a little easier when words felt difficult. One small gesture lets someone know you’d welcome their company.
+I originally built Near for someone I care about, to make reaching out a little easier when words felt difficult. One small gesture lets someone know you’d welcome their company.
 
 Each person receives a private, single-use invitation and registers one passkey. Both get the same access and the same monkey button. The deployment owner handles maintenance from a separate local terminal; neither account has administrator powers in the app.
 
@@ -40,11 +40,11 @@ There are no message choices, freeform text, reminders, analytics, or signal his
 
 ## Try it locally yourself
 
-The demo needs no Cloudflare, VPS, or Telegram account and sends nothing. With Git, npm, and Node.js installed, run these commands from a directory where a new `BabyMonkey` folder is safe to create:
+The demo needs no Cloudflare, VPS, or Telegram account and sends nothing. With Git, npm, and Node.js installed, run these commands from a directory where a new `near` folder is safe to create:
 
 ```sh
-git clone https://github.com/arshiaghaf/BabyMonkey.git
-cd BabyMonkey/site
+git clone https://github.com/arshiaghaf/near.git
+cd near/site
 npm ci
 npm run demo
 ```
@@ -66,6 +66,8 @@ Hosted setup uses your own permanent app domain, Cloudflare account, isolated Ub
 The Worker never receives the Telegram bot token, destination, or message configuration. Those stay in the relay's private configuration. Public responses remain neutral; protected artwork and actions require server authorization.
 
 Follow [the hosted setup sequence](docs/SETUP.md#3-prepare-private-owner-files-and-the-cloudflare-database) after the demo. Provisioning, migrations, DNS, deployment, notification enablement, and a live send are separate owner-approved stages. The [validation record](VALIDATION.md) documents local synthetic checks; hosted delivery, renewal, and real-device behavior require verification on your installation.
+
+See [branding compatibility](docs/BRANDING.md) for retained installation identifiers and local tooling names.
 
 ## License and artwork
 

@@ -14,15 +14,15 @@ export async function createDemoSeed(root) {
     catch (error) { if (error.code === 'ENOENT') break; throw error; }
   }
   const temporaryRoot = await realpath(os.tmpdir());
-  const parent = process.env.BABYMONKEY_DEMO_PARENT_STATE;
+  const parent = process.env.NEAR_DEMO_PARENT_STATE;
   if (parent) {
     const info = await lstat(parent);
-    if (!info.isDirectory() || info.isSymbolicLink() || info.uid !== process.getuid() || (info.mode & 0o777) !== 0o700 || await realpath(parent) !== parent || path.dirname(parent) !== temporaryRoot || !path.basename(parent).startsWith('babymonkey-demo-run-')) throw new Error('Unsafe parent-owned demo directory.');
+    if (!info.isDirectory() || info.isSymbolicLink() || info.uid !== process.getuid() || (info.mode & 0o777) !== 0o700 || await realpath(parent) !== parent || path.dirname(parent) !== temporaryRoot || !path.basename(parent).startsWith('near-demo-run-')) throw new Error('Unsafe parent-owned demo directory.');
   }
   const stateRoot = parent ?? temporaryRoot;
-  const stateDir = await mkdtemp(path.join(stateRoot, 'babymonkey-demo-'));
+  const stateDir = await mkdtemp(path.join(stateRoot, 'near-demo-'));
   const dispose = async () => {
-    if (await realpath(stateDir) !== stateDir || path.dirname(stateDir) !== stateRoot || !path.basename(stateDir).startsWith('babymonkey-demo-')) throw new Error('Unsafe demo cleanup path.');
+    if (await realpath(stateDir) !== stateDir || path.dirname(stateDir) !== stateRoot || !path.basename(stateDir).startsWith('near-demo-')) throw new Error('Unsafe demo cleanup path.');
     await rm(stateDir, { recursive: true });
   };
   const run = (args) => {
