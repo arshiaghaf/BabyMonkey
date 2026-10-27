@@ -26,7 +26,7 @@
     "demo:failure": "NEAR_LOCAL_DEMO=1 NEAR_FAKE_DELIVERY=definitive-failure NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
     "demo:ambiguous": "NEAR_LOCAL_DEMO=1 NEAR_FAKE_DELIVERY=ambiguous NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
     "artifact:check": "node scripts/check-artifact.mjs",
-    "test:setup": "node --test --test-concurrency=1 scripts/setup-check.test.mjs scripts/demo-safety.test.mjs scripts/runner-lifecycle.test.mjs scripts/browser-output.test.mjs scripts/inline-preview-props.test.mjs",
+    "test:setup": "node --test --test-concurrency=1 scripts/setup-check.test.mjs scripts/demo-safety.test.mjs scripts/runner-lifecycle.test.mjs scripts/browser-output.test.mjs scripts/inline-preview-props.test.mjs scripts/undici-security.test.mjs",
     "test:browser:production": "node scripts/run-cloudflare-browser-tests.mjs"
   },
   "dependencies": {
@@ -59,11 +59,11 @@
   },
   "overrides": {
     "miniflare": {
-      "undici": "7.29.1",
+      "undici": "7.30.1",
       "sharp": "0.35.5"
     },
     "jsdom": {
-      "undici": "8.10.2"
+      "undici": "8.12.2"
     }
   }
 }
