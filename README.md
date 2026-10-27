@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="site/protected-assets/monkey/ready-monkey.png" width="240" alt="A smiling baby monkey sitting inside a pink storybook badge">
+  <img src="docs/images/near-icon.png" width="96" alt="Near icon">
 </p>
 
-# Near
+<h1 align="center">Near</h1>
 
 A little pink way to ask someone to reach out. **Exactly two equal users, one monkey button, and one fixed Telegram signal sent only after a deliberate tap.**
 
