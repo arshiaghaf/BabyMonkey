@@ -26,7 +26,7 @@
     "demo:failure": "NEAR_LOCAL_DEMO=1 NEAR_FAKE_DELIVERY=definitive-failure NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
     "demo:ambiguous": "NEAR_LOCAL_DEMO=1 NEAR_FAKE_DELIVERY=ambiguous NEXT_TELEMETRY_DISABLED=1 node scripts/run-development-preview.mjs --hostname 127.0.0.1",
     "artifact:check": "node scripts/check-artifact.mjs",
-    "test:setup": "node --test --test-concurrency=1 scripts/setup-check.test.mjs scripts/demo-safety.test.mjs scripts/runner-lifecycle.test.mjs scripts/browser-output.test.mjs scripts/undici-security.test.mjs scripts/glob-security.test.mjs",
+    "test:setup": "node --test --test-concurrency=1 scripts/setup-check.test.mjs scripts/demo-safety.test.mjs scripts/runner-lifecycle.test.mjs scripts/browser-output.test.mjs scripts/undici-security.test.mjs scripts/glob-security.test.mjs scripts/zod-security.test.mjs",
     "test:browser:production": "node scripts/run-cloudflare-browser-tests.mjs"
   },
   "dependencies": {
@@ -58,6 +58,12 @@
     "wrangler": "4.151.0"
   },
   "overrides": {
+    "@cloudflare/vitest-plugin": {
+      "zod": "4.6.6"
+    },
+    "eslint-plugin-react-hooks": {
+      "zod": "4.6.6"
+    },
     "@node-minify/core": {
       "glob": "10.5.0"
     },
