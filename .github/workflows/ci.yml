@@ -35,7 +35,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '24.22.1'
+          node-version: '24.22.2'
           cache: npm
           cache-dependency-path: site/package-lock.json
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
@@ -75,7 +75,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '24.22.1'
+          node-version: '24.22.2'
           cache: npm
           cache-dependency-path: site/package-lock.json
       - name: Install locked dependencies
@@ -110,7 +110,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '24.22.1'
+          node-version: '24.22.2'
           cache: npm
           cache-dependency-path: maintenance/d1-rest-adapter/package-lock.json
       - name: Install locked dependencies
@@ -132,7 +132,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '24.22.1'
+          node-version: '24.22.2'
           cache: npm
           cache-dependency-path: maintenance/maintenance-cli/package-lock.json
       - name: Install locked dependencies

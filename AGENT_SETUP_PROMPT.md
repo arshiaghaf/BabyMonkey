@@ -35,8 +35,8 @@ execution.
 
 Inspect my OS, shell, Git, Node/npm, browser, available ports, and existing
 local state before asking questions. The guide assumes a macOS owner computer
-and Ubuntu/systemd VPS. Node 24.22.1+ is required for local tooling and builds;
-`.node-version` and CI pin 24.22.1. Do not claim Linux
+and Ubuntu/systemd VPS. Node 24.22.2+ is required for local tooling and builds;
+`.node-version` and CI pin 24.22.2. Do not claim Linux
 compatibility was tested. Native Windows is unsupported by the local demo and
 maintenance CLI. Go is needed later for relay checks. Explain any missing
 prerequisite and get approval before installing system tooling or incurring
